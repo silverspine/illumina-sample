@@ -26,3 +26,38 @@ Before running the tests make sure you are serving the app via `ng serve`.
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+## Tech specs
+	Angular 4	
+	Lodash
+	Observables
+	ES6
+	Bootstrap
+	HTML5
+	Typescript
+	Node
+	Express
+	Mongo 
+
+## Instructions
+Create a login using JWT to authenticate
+
+Actions should contain CRUD operations
+each time a user is selected the URL should change and if the URL change the components should 
+change accordingly
+
+Make sure you are using Template drive and Reactive forms
+
+## Client Model
+Name
+Phone
+Marital Status (single/married -> checkbox) 
+Sex (dropdown)
+Age (number)
+Proffesion
+
+## User Model
+username
+Password
+Type of user (combo box)
+Image
