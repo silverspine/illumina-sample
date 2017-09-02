@@ -9,7 +9,6 @@ const db = require('../config/db');
  * Connect to the database
  */
 const connection = (closure) => {
-    // return MongoClient.connect('mongodb://localhost:27017/illumina-sample', (err, db) => {
     return MongoClient.connect(db.url, (err, db) => {
         if (err) return console.log(err);
 
@@ -65,29 +64,31 @@ router.post('/users', (req, res) => {
     let newUser = req.body;
 
     if (!req.body.username) {
-		handleError("Must provide a username.", res, 400);
+		sendError("Must provide a username.", res, 400);
+	}else{
+		connection((db) => {
+			db.collection('users')
+				.insert(newUser)
+				.then((result) => {
+					response.data = result.ops[0];
+					res.json(response);
+				})
+				.catch((err) => {
+					sendError(err, res);
+				});
+		});
 	}
-
-	connection((db) => {
-		db.collection('users')
-        	.insert(newUser, (err, result) => {
-        		if(err){
-        			sendError(err, result);
-        		}else{
-        			response.data = result.ops[0];
-        		}
-        	});
-	});
 });
 
 /**
  * Get a user
  */
 router.get('/users/:id', (req, res) => {
+	let id = req.params.id;
+
     connection((db) => {
         db.collection('users')
-            .findOne({_id: new ObjectID(req.params.id)})
-            .toArray()
+            .findOne({_id: new ObjectID(id)})
             .then((users) => {
                 response.data = users;
                 res.json(response);
@@ -102,14 +103,43 @@ router.get('/users/:id', (req, res) => {
  * Update a user
  */
 router.put('/users/:id', (req, res) => {
-    
+    let newUser = req.body;
+    let id = req.params.id;
+
+    if (!req.body.username) {
+		sendError("Must provide a username.", res, 400);
+	}else{
+		connection((db) => {
+			db.collection('users')
+				.insert(newUser)
+				.then((result) => {
+					response.data = result.ops[0];
+					res.json(response);
+				})
+				.catch((err) => {
+					sendError(err, res);
+				});
+		});
+	}
 });
 
 /**
  * Remove a user
  */
-router.post('/users/:id', (req, res) => {
-    
+router.delete('/users/:id', (req, res) => {
+    let id = req.params.id;
+	
+    connection((db) => {
+        db.collection('users')
+            .deleteOne({_id: new ObjectID(id)})
+            .then((users) => {
+                response.data = users;
+                res.json(response);
+            })
+            .catch((err) => {
+                sendError(err, res);
+            });
+    });
 });
 
 module.exports = router;
