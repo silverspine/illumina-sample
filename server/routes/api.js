@@ -1,145 +1,331 @@
+/////////////////////////////////////////////////////
+////////////////////////////////////////////////// //
+// router to handle the CRUD operations via API // //
+////////////////////////////////////////////////// //
+/////////////////////////////////////////////////////
+
 const express = require('express');
 const router = express.Router();
-const MongoClient = require('mongodb').MongoClient;
-const ObjectID = require('mongodb').ObjectID;
-const db = require('../config/db');
-
+const db_config = require('../config/db');
+const mongoose = require('mongoose');
 
 /**
- * Connect to the database
+ * Mongoose configuration block
  */
-const connection = (closure) => {
-    return MongoClient.connect(db.url, (err, db) => {
-        if (err) return console.log(err);
-
-        closure(db);
-    });
-};
+mongoose.Promise = global.Promise;
+mongoose.connect(db_config.url);
 
 /**
- * Error handling
+ * moongose model imports
  */
-const sendError = (err, res, status = 501) => {
-    response.status = status;
-    response.message = typeof err == 'object' ? err.message : err;
-    res.status(status).json(response);
-};
+const User = require('../models/user');
+const Type = require('../models/type');
+const Client = require('../models/client');
 
 /**
- * Response handling
+ * Base response object
  */
-let response = {
-    status: 200,
-    data: [],
-    message: null
-};
-
-
-/*==================
-	User routes
-====================*/
-
-/**
- * Get users 
- */
-router.get('/users', (req, res) => {
-    connection((db) => {
-        db.collection('users')
-            .find()
-            .toArray()
-            .then((users) => {
-                response.data = users;
-                res.json(response);
-            })
-            .catch((err) => {
-                sendError(err, res);
-            });
-    });
-});
-
-/**
- * Create new user
- */
-router.post('/users', (req, res) => {
-    let newUser = req.body;
-
-    if (!req.body.username) {
-		sendError("Must provide a username.", res, 400);
-	}else{
-		connection((db) => {
-			db.collection('users')
-				.insert(newUser)
-				.then((result) => {
-					response.data = result.ops[0];
-					res.json(response);
-				})
-				.catch((err) => {
-					sendError(err, res);
-				});
-		});
+class BaseResponse{
+	constructor(data = [], status = 200, message = null){
+		this.status = status;
+		this.data = data;
+		this.message = message;
 	}
-});
+}
 
 /**
- * Get a user
+ * Error handling response
  */
-router.get('/users/:id', (req, res) => {
-	let id = req.params.id;
+const sendError = (err, res, status = 500, data = []) => {
+	let message = typeof err == 'object' ? err.message : err;
+    res.status(status).json(new BaseResponse( data, status, message));
+};
 
-    connection((db) => {
-        db.collection('users')
-            .findOne({_id: new ObjectID(id)})
-            .then((users) => {
-                response.data = users;
-                res.json(response);
-            })
-            .catch((err) => {
-                sendError(err, res);
-            });
-    });
-});
+///////////////////////
+// User Types routes //
+///////////////////////
+router.route('/types')
+	/**
+	 * Create a new User Type
+	 */
+	.post((req, res) => {
+		let formFields = req.body;
+		let type = new Type();
+		type.name = formFields.name;
+		type.save()
+			.then((type) => {
+				let status = 201;
+				res.status(status).json(new BaseResponse(type, status));
+			})
+			.catch((err) => {				
+				sendError(err, res, 409);
+			});
+	})
 
-/**
- * Update a user
- */
-router.put('/users/:id', (req, res) => {
-    let newUser = req.body;
-    let id = req.params.id;
+	/**
+	 * List Types
+	 */
+	.get((req, res) => {
+		Type.find()
+		.then((types) => {
+            res.json(new BaseResponse(types));
+        })
+        .catch((err) => {
+            sendError(err, res);
+        });
+	});
 
-    if (!req.body.username) {
-		sendError("Must provide a username.", res, 400);
-	}else{
-		connection((db) => {
-			db.collection('users')
-				.insert(newUser)
-				.then((result) => {
-					response.data = result.ops[0];
-					res.json(response);
-				})
-				.catch((err) => {
-					sendError(err, res);
-				});
+
+//////////////////////////
+// Specific Type routes //
+//////////////////////////
+router.route('/types/:id')
+	/**
+	 * Get a specific Type
+	 */
+	.get((req, res) => {
+		Type.findById(req.params.id)
+		.then((type) => {
+			if (type)
+				res.json(new BaseResponse(type));
+			else
+				sendError('Type not found',res, 404);
+		})
+		.catch((err) => {
+			sendError(err,res);
+		})
+	})
+
+	/**
+	 * Update a Type
+	 */
+	.put((req, res) => {
+		let formFields = req.body;
+		Type.findById(req.params.id)
+		.then((type) => {
+			type.name = formFields.name;
+			type.save()
+			.then((type) => {
+				res.json(new BaseResponse(type));
+			})
+			.catch((err) => {
+				sendError(err, res);
+			});
+		})
+		.catch((err) => {
+			sendError(err, res);
 		});
-	}
-});
+	})
 
-/**
- * Remove a user
- */
-router.delete('/users/:id', (req, res) => {
-    let id = req.params.id;
-	
-    connection((db) => {
-        db.collection('users')
-            .deleteOne({_id: new ObjectID(id)})
-            .then((users) => {
-                response.data = users;
-                res.json(response);
-            })
-            .catch((err) => {
-                sendError(err, res);
-            });
-    });
-});
+	/**
+	 * Delete a Type
+	 */
+	.delete((req, res) => {
+		Type.remove({_id: req.params.id})
+		.then(() => {
+			let status = 201;
+			res.status(status).json(new BaseResponse([], status, 'Successfully deleted'));
+		})
+		.catch((err) => {
+			sendError(err, res);
+		})
+	});
+
+
+/////////////////
+// User routes //
+/////////////////
+router.route('/users')
+	/**
+	 * Create a new User
+	 */
+	.post((req, res) => {
+		let formFields = req.body;
+		let user = new User();
+		user.username = formFields.username;
+		user.password = formFields.password;
+		user.type = formFields.type;
+		user.save()
+			.then((user) => {
+				let status = 201;
+				res.status(status).json(new BaseResponse(user, status));
+			})
+			.catch((err) => {				
+				sendError(err, res, 409);
+			});
+	})
+
+	/**
+	 * List Users
+	 */
+	.get((req, res) => {
+		User.find()
+		.populate('type')
+		.exec()
+		.then((users) => {
+            res.json(new BaseResponse(users));
+        })
+        .catch((err) => {
+            sendError(err, res);
+        });
+	});
+
+//////////////////////////
+// Specific User routes //
+//////////////////////////
+router.route('/users/:id')
+	/**
+	 * Get a specific User
+	 */
+	.get((req, res) => {
+		User.findById(req.params.id)
+		.populate('type')
+		.exec()
+		.then((user) => {
+			if (user)
+				res.json(new BaseResponse(user));
+			else
+				sendError('User not found',res, 404);
+		})
+		.catch((err) => {
+			sendError(err,res);
+		})
+	})
+
+	/**
+	 * Update a User
+	 */
+	.put((req, res) => {
+		let formFields = req.body;
+		User.findById(req.params.id)
+		.then((user) => {
+			user.username = formFields.username;
+			user.password = formFields.password;
+			user.type = formFields.type;
+			user.save()
+			.then((user) => {
+				res.json(new BaseResponse(user));
+			})
+			.catch((err) => {
+				sendError(err, res);
+			});
+		})
+		.catch((err) => {
+			sendError(err, res);
+		});
+	})
+
+	/**
+	 * Delete a User
+	 */
+	.delete((req, res) => {
+		User.remove({_id: req.params.id})
+		.then(() => {
+			let status = 201;
+			res.status(status).json(new BaseResponse([], status, 'Successfully deleted'));
+		})
+		.catch((err) => {
+			sendError(err, res);
+		})
+	});
+
+///////////////////
+// Client routes //
+///////////////////
+router.route('/clients')
+	/**
+	 * Create a new Client
+	 */
+	.post((req, res) => {
+		let formFields = req.body;
+		let client = new Client();
+		client.name = formFields.name;
+		client.phone = formFields.phone;
+		client.married = formFields.married;
+		client.male = formFields.male;
+		client.age = formFields.age;
+		client.profession = formFields.profession;
+		client.save()
+			.then((client) => {
+				let status = 201;
+				res.status(status).json(new BaseResponse(client, status));
+			})
+			.catch((err) => {				
+				sendError(err, res, 409);
+			});
+	})
+
+	/**
+	 * List Clients
+	 */
+	.get((req, res) => {
+		Client.find()
+		.then((clients) => {
+            res.json(new BaseResponse(clients));
+        })
+        .catch((err) => {
+            sendError(err, res);
+        });
+	});
+
+////////////////////////////
+// Specific Client routes //
+////////////////////////////
+router.route('/clients/:id')
+	/**
+	 * Get a specific Client
+	 */
+	.get((req, res) => {
+		Client.findById(req.params.id)
+		.then((client) => {
+			if (client)
+				res.json(new BaseResponse(client));
+			else
+				sendError('Client not found',res, 404);
+		})
+		.catch((err) => {
+			sendError(err,res);
+		})
+	})
+
+	/**
+	 * Update a Client
+	 */
+	.put((req, res) => {
+		let formFields = req.body;
+		Client.findById(req.params.id)
+		.then((client) => {
+			client.name = formFields.name;
+			client.phone = formFields.phone;
+			client.married = formFields.married;
+			client.male = formFields.male;
+			client.age = formFields.age;
+			client.profession = formFields.profession;
+			client.save()
+			.then((client) => {
+				res.json(new BaseResponse(client));
+			})
+			.catch((err) => {
+				sendError(err, res);
+			});
+		})
+		.catch((err) => {
+			sendError(err, res);
+		});
+	})
+
+	/**
+	 * Delete a Client
+	 */
+	.delete((req, res) => {
+		Client.remove({_id: req.params.id})
+		.then(() => {
+			let status = 201;
+			res.status(status).json(new BaseResponse([], status, 'Successfully deleted'));
+		})
+		.catch((err) => {
+			sendError(err, res);
+		})
+	});
 
 module.exports = router;
