@@ -3,10 +3,10 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
 
-import { User } from '../user';
-import { UserService } from '../user.service';
-import { Type } from '../type';
-import { TypeService } from '../type.service';
+import { User } from '../models/user';
+import { UserService } from '../services/user.service';
+import { Type } from '../models/type';
+import { TypeService } from '../services/type.service';
 
 @Component({
 	selector: 'app-user-detail',

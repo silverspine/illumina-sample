@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Type } from '../type';
-import { TypeService } from '../type.service';
+import { Type } from '../models/type';
+import { TypeService } from '../services/type.service';
 
 @Component({
 	selector: 'app-types',

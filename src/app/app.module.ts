@@ -6,9 +6,9 @@ import { HttpModule } from '@angular/http';
 
 import { AppRoutingModule } from './app-routing.module';
 
-import { TypeService } from './type.service';
-import { UserService } from './user.service';
-import { ClientService } from './client.service';
+import { TypeService } from './services/type.service';
+import { UserService } from './services/user.service';
+import { ClientService } from './services/client.service';
 
 import { ClientsComponent } from './clients/clients.component';
 import { ClientDetailComponent } from './client-detail/client-detail.component';

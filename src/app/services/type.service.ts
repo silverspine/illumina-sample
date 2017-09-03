@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
-import { Type } from './type';
+import { Type } from '../models/type';
 
 @Injectable()
 export class TypeService {

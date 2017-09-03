@@ -3,8 +3,8 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
 
-import { Client } from '../client';
-import { ClientService } from '../client.service';
+import { Client } from '../models/client';
+import { ClientService } from '../services/client.service';
 
 @Component({
 	selector: 'app-client-detail',

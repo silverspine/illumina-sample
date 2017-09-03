@@ -3,8 +3,8 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
 
-import { Type } from '../type';
-import { TypeService } from '../type.service';
+import { Type } from '../models/type';
+import { TypeService } from '../services/type.service';
 
 @Component({
 	selector: 'app-type-detail',

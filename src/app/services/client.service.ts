@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
-import { User } from './user';
+import { Client } from '../models/client';
 
 @Injectable()
-export class UserService {
-	private usersUrl = 'api/users';
+export class ClientService {
+	private clientsUrl = 'api/clients';
 	private headers = new Headers({'Content-Type': 'application/json'});
 
 	constructor(private http: Http) { }
@@ -16,44 +16,44 @@ export class UserService {
 		return Promise.reject(error.message || error);
 	}
 
-	getUsers(): Promise<User[]>  {
-		return this.http.get(this.usersUrl)
+	getClients(): Promise<Client[]>  {
+		return this.http.get(this.clientsUrl)
 		.toPromise()
-		.then(response => response.json().data as User[])
+		.then(response => response.json().data as Client[])
 		.catch(this.handleError);
 	}
 
-	getUser(id: string): Promise<User> {
-		const url = `${this.usersUrl}/${id}`;
+	getClient(id: string): Promise<Client> {
+		const url = `${this.clientsUrl}/${id}`;
 		return this.http.get(url)
 		.toPromise()
-		.then(response => response.json().data as User)
+		.then(response => response.json().data as Client)
 		.catch(this.handleError);
 	}
-	
-	update(user: User): Promise<User> {
-		const url = `${this.usersUrl}/${user._id}`;
+
+	update(client: Client): Promise<Client> {
+		const url = `${this.clientsUrl}/${client._id}`;
 		return this.http
-		.put(url, JSON.stringify(user), {headers: this.headers})
+		.put(url, JSON.stringify(client), {headers: this.headers})
 		.toPromise()
-		.then(() => user)
+		.then(() => client)
 		.catch(this.handleError);
 	}
 
 	delete(id: string): Promise<void> {
-		const url = `${this.usersUrl}/${id}`;
+		const url = `${this.clientsUrl}/${id}`;
 		return this.http.delete(url, {headers: this.headers})
 		.toPromise()
 		.then(() => null)
 		.catch(this.handleError);
 	}
 
-	create(user: User): Promise<User> {
-		const url = `${this.usersUrl}`;
+	create(client: Client): Promise<Client> {
+		const url = `${this.clientsUrl}`;
 		return this.http
-		.post(url, JSON.stringify(user), {headers: this.headers})
+		.post(url, JSON.stringify(client), {headers: this.headers})
 		.toPromise()
-		.then(() => user)
+		.then(() => client)
 		.catch(this.handleError);
 	}
 }
