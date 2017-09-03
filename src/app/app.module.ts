@@ -1,22 +1,45 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
+import { FormsModule }   from '@angular/forms';
 import { AppComponent } from './app.component';
-
-// Import the Http Module and our Data Service
 import { HttpModule } from '@angular/http';
-import { DataService } from './data.service';
+
+import { AppRoutingModule } from './app-routing.module';
+
+import { TypeService } from './type.service';
+import { UserService } from './user.service';
+import { ClientService } from './client.service';
+
+import { ClientsComponent } from './clients/clients.component';
+import { ClientDetailComponent } from './client-detail/client-detail.component';
+import { UsersComponent } from './users/users.component';
+import { UserDetailComponent } from './user-detail/user-detail.component';
+import { TypesComponent } from './types/types.component';
+import { TypeDetailComponent } from './type-detail/type-detail.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
 	declarations: [
-		AppComponent
+		AppComponent,
+		ClientsComponent,
+		ClientDetailComponent,
+		UsersComponent,
+		UserDetailComponent,
+		TypesComponent,
+		TypeDetailComponent,
+		LoginComponent
 	],
 	imports: [
 		BrowserModule,
-		HttpModule				// <-Add HttpModule
-
+		HttpModule,
+		AppRoutingModule,
+		FormsModule
 	],
-	providers: [DataService],	// <-Add DataService
+	providers: [
+		TypeService,
+		UserService,
+		ClientService
+	],
 	bootstrap: [AppComponent]
 })
 export class AppModule { }

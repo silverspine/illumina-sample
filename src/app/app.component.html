@@ -1,7 +1,9 @@
-<div style="text-align:center">
-  <h1>Our MongoDB is Working!</h1>
-</div>
+<h1>{{title}}</h1>
 
-<ul>
-  <li *ngFor="let user of users">{{ user.name }}</li>
-</ul>
+<nav>
+	<a routerLink="/types">User Types</a>
+	<a routerLink="/users">Users</a>
+	<a routerLink="/clients">Clients</a>
+</nav>
+
+<router-outlet></router-outlet>

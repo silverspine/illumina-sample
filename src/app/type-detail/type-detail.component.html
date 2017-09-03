@@ -1,0 +1,14 @@
+<div *ngIf="type">
+	<h2 *ngIf="type._id">{{type.name}} details!</h2>
+	<h2 *ngIf="!type._id">Create a new User Type</h2>
+	<div *ngIf="type._id">
+		<label>id: </label>{{type._id}}
+	</div>
+	<div>
+		<label>name: </label>
+		<input [(ngModel)]="type.name" placeholder="name" />
+	</div>
+	<button (click)="goBack()">Back</button>
+	<button *ngIf="type._id" (click)="save()">Save</button>
+	<button *ngIf="!type._id" (click)="create()">Save</button>
+</div>
