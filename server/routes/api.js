@@ -80,6 +80,48 @@ router.route('/setup')
 		});
 	});
 
+////////////////////
+// Authentication //
+////////////////////
+router.route('/authenticate')
+	.post((req,res) => {
+		let formFields = req.body;
+
+		User.findOne({username: formFields.username})
+		.then((user) => {
+			if (!user || user.password !== formFields.password ){
+				res.json(new BaseResponse([], 200, 'User or password not match'));
+			} else {
+				let token = jwt.sign(user, config.secret, {
+					expiresIn: 60*60*24 // Expires in one day
+				});
+				res.json(new BaseResponse([token]));
+			}
+		})
+		.catch((err) => {
+			sendError(err, res);
+		})
+	});
+
+////////////////////////////////////////
+// Route middelware to verify a token //
+////////////////////////////////////////
+router.use((req, res, next) =>{
+	let token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+	if(token){
+		jwt.verify(token, config.secret, (err, decoded) => {
+			if(err){
+				sendError('Failed to authenticate token', res, 401);
+			}else{
+				req.decoded = decoded;
+				next();
+			}
+		});
+	}else{
+		sendError('No token provided.', res, 403);
+	}
+});
 
 ///////////////////////
 // User Types routes //
@@ -362,29 +404,6 @@ router.route('/clients/:id')
 		.then(() => {
 			let status = 201;
 			res.status(status).json(new BaseResponse([], status, 'Successfully deleted'));
-		})
-		.catch((err) => {
-			sendError(err, res);
-		})
-	});
-
-////////////////////
-// Authentication //
-////////////////////
-router.route('/authenticate')
-	.post((req,res) => {
-		let formFields = req.body;
-
-		User.findOne({username: formFields.username})
-		.then((user) => {
-			if (!user || user.password !== formFields.password ){
-				res.json(new BaseResponse([], 200, 'User or password not match'));
-			} else {
-				let token = jwt.sign(user, config.secret, {
-					expiresIn: 60*60*24 // Expires in one day
-				});
-				res.json(new BaseResponse([token]));
-			}
 		})
 		.catch((err) => {
 			sendError(err, res);
