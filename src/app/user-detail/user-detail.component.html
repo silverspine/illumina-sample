@@ -1,0 +1,24 @@
+<div *ngIf="user">
+	<h2 *ngIf="user._id">{{user.username}} details!</h2>
+	<h2 *ngIf="!user._id">Create a new User</h2>
+	<div *ngIf="user._id">
+		<label>id: </label>{{user._id}}
+	</div>
+	<div>
+		<label>username: </label>
+		<input [(ngModel)]="user.username" placeholder="username" />
+	</div>
+	<div>
+		<label>password: </label>
+		<input type="password" [(ngModel)]="user.password" placeholder="password" />
+	</div>
+	<div>
+		<label>type: </label>
+		 <select [(ngModel)]="user.type._id">
+		 	<option *ngFor="let type of types" [value]="type._id" ng-selected="type._id === user.type._id">{{ type.name }}</option>
+		</select>
+	</div>
+	<button (click)="goBack()">Back</button>
+	<button *ngIf="user._id" (click)="save()">Save</button>
+	<button *ngIf="!user._id" (click)="create()">Save</button>
+</div>

@@ -1,0 +1,12 @@
+<h2>Clients</h2>
+<div class="add-button" (click)="add(); $event.stopPropagation()">Add</div>
+<ul class="clients elements">
+	<li *ngFor="let client of clients; let i = index "
+	 [class.selected]="client === selectedClient"
+	 (click)="onSelect(client)">
+		<span class="badge">{{i+1}}</span>
+		<span>{{client.name}}</span>
+		<span class="badge details" (click)="gotoDetail(client)">info</span>
+		<span class="badge delete" (click)="delete(client)">x</span>
+	</li>
+</ul>
