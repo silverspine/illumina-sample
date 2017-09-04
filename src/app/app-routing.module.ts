@@ -9,11 +9,14 @@ import { UserDetailComponent }  from './user-detail/user-detail.component';
 import { ClientsComponent }      from './clients/clients.component';
 import { ClientDetailComponent }  from './client-detail/client-detail.component';
 
+import {AuthGuard} from './guards/auth.guard';
+
 const routes: Routes = [
 	{
 		path: '',
 		redirectTo: '/login',
-		pathMatch: 'full'
+		pathMatch: 'full',
+		canActivate: [AuthGuard]
 	},
 	{
 		path: 'login',

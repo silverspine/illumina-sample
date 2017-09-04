@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions } from '@angular/http';
+import { Http, Headers, RequestOptions, Response } from '@angular/http';
+import { Observable } from 'rxjs';
 import 'rxjs/add/operator/toPromise';
 
+import { AuthenticationService } from '../services/authentication.service';
 import { User } from '../models/user';
 
 @Injectable()
@@ -9,7 +11,10 @@ export class UserService {
 	private usersUrl = 'api/users';
 	private headers = new Headers({'Content-Type': 'application/json'});
 
-	constructor(private http: Http) { }
+	constructor(
+		private http: Http,
+		private authenticationService: AuthenticationService
+		) { }
 
 
 	private handleError(error: any): Promise<any> {
