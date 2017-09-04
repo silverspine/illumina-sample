@@ -4,6 +4,6 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## Instructions
 1. Add your mongodb connection URL to the the db_url property in the file `/server/config/server.js`.
-2. Start the node server via the `server.js` file.
+2. Start the node server using the `server.js` file.
 3. On your browser go to `localhost:3000/api/setup` to create a dummy user.
 4. Go to `localhost:3000` and log with the details `username: admin` `password: admin`.

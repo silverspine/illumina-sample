@@ -89,15 +89,27 @@ router.route('/authenticate')
 
 		User.findOne({username: formFields.username})
 		.then((user) => {
-			if (!user || user.password !== formFields.password ){
+			// if (!user || user.password !== formFields.password ){
+			if (!user ){
+				console.log('No user');
 				res.json(new BaseResponse([], 200, 'User or password not match'));
 			} else {
-				let token = jwt.sign(user, config.secret, {
-					expiresIn: 60*60*24 // Expires in one day
-				});
-				let response = new BaseResponse();
-				response.token = token;
-				res.json(response);
+				user.comparePassword(formFields.password, function(err, isMatch) {
+					console.log('comparePassword');
+					console.log(isMatch);
+			        if (err) throw err;
+			        if(!isMatch){
+				    	res.json(new BaseResponse([], 200, 'User or password not match'));
+				    }else{
+	    				let token = jwt.sign(user, config.secret, {
+	    					expiresIn: 60*60*24 // Expires in one day
+	    				});
+	    				let response = new BaseResponse();
+	    				response.token = token;
+	    				res.json(response);
+	    			}
+			        return isMatch;
+			    });
 			}
 		})
 		.catch((err) => {
