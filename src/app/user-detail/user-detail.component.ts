@@ -1,12 +1,12 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
 
-import { User } from '../user';
-import { UserService } from '../user.service';
-import { Type } from '../type';
-import { TypeService } from '../type.service';
+import { User } from '../models/user';
+import { UserService } from '../services/user.service';
+import { Type } from '../models/type';
+import { TypeService } from '../services/type.service';
 
 @Component({
 	selector: 'app-user-detail',
@@ -22,8 +22,13 @@ export class UserDetailComponent implements OnInit {
 		private userService: UserService,
 		private typeService: TypeService,
 		private route: ActivatedRoute,
-		private location: Location
-		) { }
+		private location: Location,
+		private router: Router
+	) {
+		if(!localStorage.getItem('currentUser')){
+			this.router.navigate(['/']);
+		}
+	}
 
 	ngOnInit(): void {
 		this.typeService.getTypes().then(types => this.types = types);

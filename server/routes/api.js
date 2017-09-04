@@ -6,14 +6,15 @@
 
 const express = require('express');
 const router = express.Router();
-const db_config = require('../config/db');
+const config = require('../config/server');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 
 /**
  * Mongoose configuration block
  */
 mongoose.Promise = global.Promise;
-mongoose.connect(db_config.url);
+mongoose.connect(config.db_url);
 
 /**
  * moongose model imports
@@ -40,6 +41,89 @@ const sendError = (err, res, status = 500, data = []) => {
 	let message = typeof err == 'object' ? err.message : err;
     res.status(status).json(new BaseResponse( data, status, message));
 };
+
+//////////////////////////////////////////////////////
+// Initialize app with a sample user and user types //
+//////////////////////////////////////////////////////
+router.route('/setup')
+	.get((req, res) => {
+		let adminType, testUser;
+		
+		Type.findOne({name: "admin"})
+		.then((type) => {
+			if (type)
+				adminType = type;
+			else
+				adminType = null;
+		})
+		.catch((err) => {
+			adminType = null;
+		});
+
+		if(!adminType){
+			adminType = new Type();
+			adminType.name = 'admin';
+			adminType.save();
+		}
+
+		testUser = new User();
+		testUser.username = 'admin';
+		testUser.password = 'admin';
+		testUser.type=adminType._id;
+		testUser.save()
+		.then((user) => {
+			let status = 201;
+			res.status(status).json(new BaseResponse(user, status));
+		})
+		.catch((err) => {				
+			sendError(err, res, 409);
+		});
+	});
+
+////////////////////
+// Authentication //
+////////////////////
+router.route('/authenticate')
+	.post((req,res) => {
+		let formFields = req.body;
+
+		User.findOne({username: formFields.username})
+		.then((user) => {
+			if (!user || user.password !== formFields.password ){
+				res.json(new BaseResponse([], 200, 'User or password not match'));
+			} else {
+				let token = jwt.sign(user, config.secret, {
+					expiresIn: 60*60*24 // Expires in one day
+				});
+				let response = new BaseResponse();
+				response.token = token;
+				res.json(response);
+			}
+		})
+		.catch((err) => {
+			sendError(err, res);
+		})
+	});
+
+////////////////////////////////////////
+// Route middelware to verify a token //
+////////////////////////////////////////
+router.use((req, res, next) =>{
+	let token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+	if(token){
+		jwt.verify(token, config.secret, (err, decoded) => {
+			if(err){
+				sendError('Failed to authenticate token', res, 401);
+			}else{
+				req.decoded = decoded;
+				next();
+			}
+		});
+	}else{
+		sendError('No token provided.', res, 403);
+	}
+});
 
 ///////////////////////
 // User Types routes //

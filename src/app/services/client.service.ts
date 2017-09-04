@@ -2,14 +2,17 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
-import { Client } from './client';
+import { Client } from '../models/client';
 
 @Injectable()
 export class ClientService {
 	private clientsUrl = 'api/clients';
 	private headers = new Headers({'Content-Type': 'application/json'});
 
-	constructor(private http: Http) { }
+	constructor(private http: Http) {
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
+	}
 
 
 	private handleError(error: any): Promise<any> {
@@ -17,7 +20,8 @@ export class ClientService {
 	}
 
 	getClients(): Promise<Client[]>  {
-		return this.http.get(this.clientsUrl)
+		return this.http
+		.get(this.clientsUrl, {headers: this.headers})
 		.toPromise()
 		.then(response => response.json().data as Client[])
 		.catch(this.handleError);
@@ -25,7 +29,8 @@ export class ClientService {
 
 	getClient(id: string): Promise<Client> {
 		const url = `${this.clientsUrl}/${id}`;
-		return this.http.get(url)
+		return this.http
+		.get(url, {headers: this.headers})
 		.toPromise()
 		.then(response => response.json().data as Client)
 		.catch(this.handleError);

@@ -1,10 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
 
-import { Client } from '../client';
-import { ClientService } from '../client.service';
+import { Client } from '../models/client';
+import { ClientService } from '../services/client.service';
 
 @Component({
 	selector: 'app-client-detail',
@@ -18,8 +18,13 @@ export class ClientDetailComponent implements OnInit {
 	constructor(
 		private clientService: ClientService,
 		private route: ActivatedRoute,
-		private location: Location
-		) { }
+		private location: Location,
+		private router: Router
+	) {
+		if(!localStorage.getItem('currentUser')){
+			this.router.navigate(['/']);
+		}
+	}
 
 	ngOnInit(): void {
 		this.route.paramMap
