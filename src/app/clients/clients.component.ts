@@ -16,7 +16,11 @@ export class ClientsComponent implements OnInit {
 	constructor(
 		private router: Router,
 		private clientService: ClientService
-	) { }
+	) {
+		if(!localStorage.getItem('currentUser')){
+			this.router.navigate(['/']);
+		}
+	}
 
 	ngOnInit() {
 		this.getClients();

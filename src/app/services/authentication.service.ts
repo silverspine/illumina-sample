@@ -5,6 +5,8 @@ import 'rxjs/add/operator/map'
 
 @Injectable()
 export class AuthenticationService {
+	private headers = new Headers({'Content-Type': 'application/json'});
+	private authUrl = 'api/authenticate';
 	public token: string;
 
 	constructor(private http: Http) {
@@ -14,7 +16,8 @@ export class AuthenticationService {
 	}
 
 	login(username: string, password: string): Observable<boolean> {
-		return this.http.post('/api/authenticate', JSON.stringify({ username: username, password: password }))
+		const url = `${this.authUrl}`;
+		return this.http.post(url, JSON.stringify({ username: username, password: password }), {headers: this.headers})
 			.map((response: Response) => {
 				// login successful if there's a jwt token in the response
 				let token = response.json() && response.json().token;

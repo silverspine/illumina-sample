@@ -95,7 +95,9 @@ router.route('/authenticate')
 				let token = jwt.sign(user, config.secret, {
 					expiresIn: 60*60*24 // Expires in one day
 				});
-				res.json(new BaseResponse([token]));
+				let response = new BaseResponse();
+				response.token = token;
+				res.json(response);
 			}
 		})
 		.catch((err) => {

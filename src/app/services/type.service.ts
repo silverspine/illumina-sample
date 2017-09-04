@@ -9,7 +9,10 @@ export class TypeService {
 	private typesUrl = 'api/types';
 	private headers = new Headers({'Content-Type': 'application/json'});
 
-	constructor(private http: Http) { }
+	constructor(private http: Http) {
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
+	}
 
 
 	private handleError(error: any): Promise<any> {
@@ -17,7 +20,8 @@ export class TypeService {
 	}
 
 	getTypes(): Promise<Type[]>  {
-		return this.http.get(this.typesUrl)
+		return this.http
+		.get(this.typesUrl, {headers: this.headers})
 		.toPromise()
 		.then(response => response.json().data as Type[])
 		.catch(this.handleError);
@@ -25,7 +29,8 @@ export class TypeService {
 
 	getType(id: string): Promise<Type> {
 		const url = `${this.typesUrl}/${id}`;
-		return this.http.get(url)
+		return this.http
+		.get(url, {headers: this.headers})
 		.toPromise()
 		.then(response => response.json().data as Type)
 		.catch(this.handleError);

@@ -11,10 +11,10 @@ export class UserService {
 	private usersUrl = 'api/users';
 	private headers = new Headers({'Content-Type': 'application/json'});
 
-	constructor(
-		private http: Http,
-		private authenticationService: AuthenticationService
-		) { }
+	constructor(private http: Http) {
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
+	}
 
 
 	private handleError(error: any): Promise<any> {
@@ -22,7 +22,8 @@ export class UserService {
 	}
 
 	getUsers(): Promise<User[]>  {
-		return this.http.get(this.usersUrl)
+		return this.http
+		.get(this.usersUrl, {headers: this.headers})
 		.toPromise()
 		.then(response => response.json().data as User[])
 		.catch(this.handleError);
@@ -30,7 +31,8 @@ export class UserService {
 
 	getUser(id: string): Promise<User> {
 		const url = `${this.usersUrl}/${id}`;
-		return this.http.get(url)
+		return this.http
+		.get(url, {headers: this.headers})
 		.toPromise()
 		.then(response => response.json().data as User)
 		.catch(this.handleError);

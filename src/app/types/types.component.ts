@@ -16,7 +16,11 @@ export class TypesComponent implements OnInit {
 	constructor(
 		private router: Router,
 		private typeService: TypeService
-		) { }
+	) {
+		if(!localStorage.getItem('currentUser')){
+			this.router.navigate(['/']);
+		}
+	}
 
 	ngOnInit() {
 		this.getTypes();

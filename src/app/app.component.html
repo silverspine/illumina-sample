@@ -1,10 +1,9 @@
-<h1>{{title}}</h1>
-<a [routerLink]="['/login']">Logout</a>
-
+<h1>{{title}}</h1>{{loggedIn}}
 <nav>
 	<a routerLink="/types" routerLinkActive="active">User Types</a>
 	<a routerLink="/users" routerLinkActive="active">Users</a>
 	<a routerLink="/clients" routerLinkActive="active">Clients</a>
+	<a routerLink="/login">Logout</a>
 </nav>
 
 <!-- main app container -->
