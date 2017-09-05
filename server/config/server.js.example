@@ -1,0 +1,5 @@
+module.exports = {
+    SECRET: 'illumina-sample',
+    DB_URL: 'mongodb://illumina-sample:illumina-sample@ds123124.mlab.com:23124/illumina-sample',
+    SALT_WORK_FACTOR: 10
+};

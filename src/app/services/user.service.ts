@@ -11,10 +11,7 @@ export class UserService {
 	private usersUrl = 'api/users';
 	private headers = new Headers({'Content-Type': 'application/json'});
 
-	constructor(private http: Http) {
-		if(localStorage.getItem('currentUser'))
-			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
-	}
+	constructor(private http: Http) {}
 
 
 	private handleError(error: any): Promise<any> {
@@ -22,6 +19,8 @@ export class UserService {
 	}
 
 	getUsers(): Promise<User[]>  {
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
 		return this.http
 		.get(this.usersUrl, {headers: this.headers})
 		.toPromise()
@@ -31,6 +30,8 @@ export class UserService {
 
 	getUser(id: string): Promise<User> {
 		const url = `${this.usersUrl}/${id}`;
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
 		return this.http
 		.get(url, {headers: this.headers})
 		.toPromise()
@@ -40,6 +41,8 @@ export class UserService {
 	
 	update(user: User): Promise<User> {
 		const url = `${this.usersUrl}/${user._id}`;
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
 		return this.http
 		.put(url, JSON.stringify(user), {headers: this.headers})
 		.toPromise()
@@ -49,6 +52,8 @@ export class UserService {
 
 	delete(id: string): Promise<void> {
 		const url = `${this.usersUrl}/${id}`;
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
 		return this.http.delete(url, {headers: this.headers})
 		.toPromise()
 		.then(() => null)
@@ -57,6 +62,8 @@ export class UserService {
 
 	create(user: User): Promise<User> {
 		const url = `${this.usersUrl}`;
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
 		return this.http
 		.post(url, JSON.stringify(user), {headers: this.headers})
 		.toPromise()

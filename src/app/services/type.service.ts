@@ -9,10 +9,7 @@ export class TypeService {
 	private typesUrl = 'api/types';
 	private headers = new Headers({'Content-Type': 'application/json'});
 
-	constructor(private http: Http) {
-		if(localStorage.getItem('currentUser'))
-			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
-	}
+	constructor(private http: Http) {}
 
 
 	private handleError(error: any): Promise<any> {
@@ -20,6 +17,8 @@ export class TypeService {
 	}
 
 	getTypes(): Promise<Type[]>  {
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
 		return this.http
 		.get(this.typesUrl, {headers: this.headers})
 		.toPromise()
@@ -29,6 +28,8 @@ export class TypeService {
 
 	getType(id: string): Promise<Type> {
 		const url = `${this.typesUrl}/${id}`;
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
 		return this.http
 		.get(url, {headers: this.headers})
 		.toPromise()
@@ -38,6 +39,8 @@ export class TypeService {
 
 	update(type: Type): Promise<Type> {
 		const url = `${this.typesUrl}/${type._id}`;
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
 		return this.http
 		.put(url, JSON.stringify(type), {headers: this.headers})
 		.toPromise()
@@ -47,6 +50,8 @@ export class TypeService {
 
 	delete(id: string): Promise<void> {
 		const url = `${this.typesUrl}/${id}`;
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
 		return this.http.delete(url, {headers: this.headers})
 		.toPromise()
 		.then(() => null)
@@ -55,6 +60,8 @@ export class TypeService {
 
 	create(type: Type): Promise<Type> {
 		const url = `${this.typesUrl}`;
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
 		return this.http
 		.post(url, JSON.stringify(type), {headers: this.headers})
 		.toPromise()
