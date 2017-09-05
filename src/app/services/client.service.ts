@@ -9,10 +9,7 @@ export class ClientService {
 	private clientsUrl = 'api/clients';
 	private headers = new Headers({'Content-Type': 'application/json'});
 
-	constructor(private http: Http) {
-		if(localStorage.getItem('currentUser'))
-			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
-	}
+	constructor(private http: Http) {}
 
 
 	private handleError(error: any): Promise<any> {
@@ -20,6 +17,8 @@ export class ClientService {
 	}
 
 	getClients(): Promise<Client[]>  {
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
 		return this.http
 		.get(this.clientsUrl, {headers: this.headers})
 		.toPromise()
@@ -29,6 +28,8 @@ export class ClientService {
 
 	getClient(id: string): Promise<Client> {
 		const url = `${this.clientsUrl}/${id}`;
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
 		return this.http
 		.get(url, {headers: this.headers})
 		.toPromise()
@@ -38,6 +39,8 @@ export class ClientService {
 
 	update(client: Client): Promise<Client> {
 		const url = `${this.clientsUrl}/${client._id}`;
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
 		return this.http
 		.put(url, JSON.stringify(client), {headers: this.headers})
 		.toPromise()
@@ -47,6 +50,8 @@ export class ClientService {
 
 	delete(id: string): Promise<void> {
 		const url = `${this.clientsUrl}/${id}`;
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
 		return this.http.delete(url, {headers: this.headers})
 		.toPromise()
 		.then(() => null)
@@ -55,6 +60,8 @@ export class ClientService {
 
 	create(client: Client): Promise<Client> {
 		const url = `${this.clientsUrl}`;
+		if(localStorage.getItem('currentUser'))
+			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
 		return this.http
 		.post(url, JSON.stringify(client), {headers: this.headers})
 		.toPromise()
