@@ -7,7 +7,7 @@ import { TypeService } from '../services/type.service';
 @Component({
 	selector: 'app-types',
 	templateUrl: './types.component.html',
-	styleUrls: ['../shared-styles/list-elements.css', './types.component.css']
+	styleUrls: ['./types.component.css']
 })
 export class TypesComponent implements OnInit {
 	selectedType: Type;

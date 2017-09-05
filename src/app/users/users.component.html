@@ -1,12 +1,20 @@
 <h2>Users</h2>
-<div class="add-button" (click)="add(); $event.stopPropagation()">Add</div>
-<ul class="users elements">
-	<li *ngFor="let user of users; let i = index "
-	 [class.selected]="user === selectedUser"
-	 (click)="onSelect(user)">
-		<span class="badge">{{i+1}}</span>
-		<span>{{user.username}}</span>
-		<span class="badge details" (click)="gotoDetail(user)">info</span>
-		<span class="badge delete" (click)="delete(user)">x</span>
-	</li>
-</ul>
+<table class="table table-hover">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Username</th>
+			<th><input class="btn btn-primary btn-lg pull-right" type="button" value="+" (click)="add()"></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr *ngFor="let user of users; let i = index ">
+			<th>{{i+1}}</th>
+			<td>{{user.username}}</td>
+			<td class="text-right">
+				<input class="btn btn-danger" type="button" value="x" (click)="delete(user)">
+				<input class="btn btn-primary" type="button" value="Details" (click)="gotoDetail(user)">
+			</td>
+		</tr>
+	</tbody>
+</table>
