@@ -14,7 +14,7 @@ const jwt = require('jsonwebtoken');
  * Mongoose configuration block
  */
 mongoose.Promise = global.Promise;
-mongoose.connect(config.db_url);
+mongoose.connect(config.DB_URL);
 
 /**
  * moongose model imports
@@ -49,33 +49,45 @@ router.route('/setup')
 	.get((req, res) => {
 		let adminType, testUser;
 		
-		Type.findOne({name: "admin"})
-		.then((type) => {
-			if (type)
-				adminType = type;
-			else
-				adminType = null;
+		User.remove({})
+		.then(() => {
+			Type.remove({})
+			.catch( (err) => {
+				sendError(err, res, 409);
+			});
 		})
-		.catch((err) => {
-			adminType = null;
-		});
-
-		if(!adminType){
+		.then(() => {
+			Client.remove({})
+			.catch( (err) => {
+				sendError(err, res, 409);
+			});
+		})
+		.then(() => {
 			adminType = new Type();
 			adminType.name = 'admin';
-			adminType.save();
-		}
-
-		testUser = new User();
-		testUser.username = 'admin';
-		testUser.password = 'admin';
-		testUser.type=adminType._id;
-		testUser.save()
-		.then((user) => {
-			let status = 201;
-			res.status(status).json(new BaseResponse(user, status));
+			adminType.save()
+			.then( type => {
+				adminType = type; // This asignation is done just to make sure that the adminType has the new _id
+			})
+			.catch( err => {
+				sendError(err, res, 409);
+			});
 		})
-		.catch((err) => {				
+		.then(() => {
+			testUser = new User();
+			testUser.username = 'admin';
+			testUser.password = 'admin';
+			testUser.type=adminType._id;
+			testUser.save()
+			.then( user => {
+				let status = 201;
+				res.status(status).json(new BaseResponse(user, status));
+			})
+			.catch( err => {				
+				sendError(err, res, 409);
+			});
+		})
+		.catch( err => {
 			sendError(err, res, 409);
 		});
 	});
@@ -88,20 +100,16 @@ router.route('/authenticate')
 		let formFields = req.body;
 
 		User.findOne({username: formFields.username})
-		.then((user) => {
-			// if (!user || user.password !== formFields.password ){
+		.then( user => {
 			if (!user ){
-				console.log('No user');
 				res.json(new BaseResponse([], 200, 'User or password not match'));
 			} else {
-				user.comparePassword(formFields.password, function(err, isMatch) {
-					console.log('comparePassword');
-					console.log(isMatch);
+				user.comparePassword(formFields.password, (err, isMatch) => {
 			        if (err) throw err;
 			        if(!isMatch){
 				    	res.json(new BaseResponse([], 200, 'User or password not match'));
 				    }else{
-	    				let token = jwt.sign(user, config.secret, {
+	    				let token = jwt.sign(user, config.SECRET, {
 	    					expiresIn: 60*60*24 // Expires in one day
 	    				});
 	    				let response = new BaseResponse();
@@ -124,7 +132,7 @@ router.use((req, res, next) =>{
 	let token = req.body.token || req.query.token || req.headers['x-access-token'];
 
 	if(token){
-		jwt.verify(token, config.secret, (err, decoded) => {
+		jwt.verify(token, config.SECRET, (err, decoded) => {
 			if(err){
 				sendError('Failed to authenticate token', res, 401);
 			}else{
@@ -137,6 +145,19 @@ router.use((req, res, next) =>{
 	}
 });
 
+const currentUserIsAdmin = (req, res, next) => {
+	Type.findOne({name: 'admin'})
+	.then( type => {
+		if (req.decoded._doc.type == type._id)
+			next();
+		else
+			sendError("Unauthorized Access.", res, 401);
+	})
+	.catch( (err) => {
+		sendError(err, res);
+	})
+}
+
 ///////////////////////
 // User Types routes //
 ///////////////////////
@@ -145,10 +166,11 @@ router.route('/types')
 	 * Create a new User Type
 	 */
 	.post((req, res) => {
-		let formFields = req.body;
-		let type = new Type();
-		type.name = formFields.name;
-		type.save()
+		currentUserIsAdmin(req, res, () => {
+			let formFields = req.body;
+			let type = new Type();
+			type.name = formFields.name;
+			type.save()
 			.then((type) => {
 				let status = 201;
 				res.status(status).json(new BaseResponse(type, status));
@@ -156,19 +178,22 @@ router.route('/types')
 			.catch((err) => {				
 				sendError(err, res, 409);
 			});
+		})
 	})
 
 	/**
 	 * List Types
 	 */
 	.get((req, res) => {
-		Type.find()
-		.then((types) => {
-            res.json(new BaseResponse(types));
-        })
-        .catch((err) => {
-            sendError(err, res);
-        });
+		currentUserIsAdmin(req, res, () => {
+			Type.find()
+			.then((types) => {
+	            res.json(new BaseResponse(types));
+	        })
+	        .catch((err) => {
+	            sendError(err, res);
+	        });
+		})
 	});
 
 
@@ -180,15 +205,17 @@ router.route('/types/:id')
 	 * Get a specific Type
 	 */
 	.get((req, res) => {
-		Type.findById(req.params.id)
-		.then((type) => {
-			if (type)
-				res.json(new BaseResponse(type));
-			else
-				sendError('Type not found',res, 404);
-		})
-		.catch((err) => {
-			sendError(err,res);
+		currentUserIsAdmin(req, res, () => {
+			Type.findById(req.params.id)
+			.then((type) => {
+				if (type)
+					res.json(new BaseResponse(type));
+				else
+					sendError('Type not found',res, 404);
+			})
+			.catch((err) => {
+				sendError(err,res);
+			})
 		})
 	})
 
@@ -196,34 +223,38 @@ router.route('/types/:id')
 	 * Update a Type
 	 */
 	.put((req, res) => {
-		let formFields = req.body;
-		Type.findById(req.params.id)
-		.then((type) => {
-			type.name = formFields.name;
-			type.save()
+		currentUserIsAdmin(req, res, () => {
+			let formFields = req.body;
+			Type.findById(req.params.id)
 			.then((type) => {
-				res.json(new BaseResponse(type));
+				type.name = formFields.name;
+				type.save()
+				.then((type) => {
+					res.json(new BaseResponse(type));
+				})
+				.catch((err) => {
+					sendError(err, res);
+				});
 			})
 			.catch((err) => {
 				sendError(err, res);
 			});
 		})
-		.catch((err) => {
-			sendError(err, res);
-		});
 	})
 
 	/**
 	 * Delete a Type
 	 */
 	.delete((req, res) => {
-		Type.remove({_id: req.params.id})
-		.then(() => {
-			let status = 201;
-			res.status(status).json(new BaseResponse([], status, 'Successfully deleted'));
-		})
-		.catch((err) => {
-			sendError(err, res);
+		currentUserIsAdmin(req, res, () => {
+			Type.remove({_id: req.params.id})
+			.then(() => {
+				let status = 201;
+				res.status(status).json(new BaseResponse([], status, 'Successfully deleted'));
+			})
+			.catch((err) => {
+				sendError(err, res);
+			})
 		})
 	});
 
@@ -236,12 +267,13 @@ router.route('/users')
 	 * Create a new User
 	 */
 	.post((req, res) => {
-		let formFields = req.body;
-		let user = new User();
-		user.username = formFields.username;
-		user.password = formFields.password;
-		user.type = formFields.type;
-		user.save()
+		currentUserIsAdmin(req, res, () => {
+			let formFields = req.body;
+			let user = new User();
+			user.username = formFields.username;
+			user.password = formFields.password;
+			user.type = formFields.type;
+			user.save()
 			.then((user) => {
 				let status = 201;
 				res.status(status).json(new BaseResponse(user, status));
@@ -249,6 +281,7 @@ router.route('/users')
 			.catch((err) => {				
 				sendError(err, res, 409);
 			});
+		})
 	})
 
 	/**
@@ -292,36 +325,40 @@ router.route('/users/:id')
 	 * Update a User
 	 */
 	.put((req, res) => {
-		let formFields = req.body;
-		User.findById(req.params.id)
-		.then((user) => {
-			user.username = formFields.username;
-			user.password = formFields.password;
-			user.type = formFields.type;
-			user.save()
+		currentUserIsAdmin(req, res, () => {
+			let formFields = req.body;
+			User.findById(req.params.id)
 			.then((user) => {
-				res.json(new BaseResponse(user));
+				user.username = formFields.username;
+				user.password = formFields.password;
+				user.type = formFields.type;
+				user.save()
+				.then((user) => {
+					res.json(new BaseResponse(user));
+				})
+				.catch((err) => {
+					sendError(err, res);
+				});
 			})
 			.catch((err) => {
 				sendError(err, res);
 			});
 		})
-		.catch((err) => {
-			sendError(err, res);
-		});
 	})
 
 	/**
 	 * Delete a User
 	 */
 	.delete((req, res) => {
-		User.remove({_id: req.params.id})
-		.then(() => {
-			let status = 201;
-			res.status(status).json(new BaseResponse([], status, 'Successfully deleted'));
-		})
-		.catch((err) => {
-			sendError(err, res);
+		currentUserIsAdmin(req, res, () => {
+			User.remove({_id: req.params.id})
+			.then(() => {
+				let status = 201;
+				res.status(status).json(new BaseResponse([], status, 'Successfully deleted'));
+			})
+			.catch((err) => {
+				sendError(err, res);
+			})
 		})
 	});
 
