@@ -1,12 +1,20 @@
-<h2>User Types</h2> 
-<div class="add-button" (click)="add(); $event.stopPropagation()">Add</div>
-<ul class="types elements">
-	<li *ngFor="let type of types; let i = index "
-	 [class.selected]="type === selectedType"
-	 (click)="onSelect(type)">
-		<span class="badge">{{i+1}}</span>
-		<span>{{type.name}}</span>
-		<span class="badge details" (click)="gotoDetail(type)">info</span>
-		<span class="badge delete" (click)="delete(type)">x</span>
-	</li>
-</ul>
+<h2>User Types</h2>
+<table class="table table-hover">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Name</th>
+			<th><input class="btn btn-primary btn-lg pull-right" type="button" value="+" (click)="add()"></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr *ngFor="let type of types; let i = index ">
+			<th>{{i+1}}</th>
+			<td>{{type.name}}</td>
+			<td class="text-right">
+				<input class="btn btn-danger" type="button" value="x" (click)="delete(type)">
+				<input class="btn btn-primary" type="button" value="Details" (click)="gotoDetail(type)">
+			</td>
+		</tr>
+	</tbody>
+</table>

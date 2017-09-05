@@ -1,37 +1,70 @@
 <div *ngIf="client">
-	<h2 *ngIf="client._id">{{client.name}} details!</h2>
-	<h2 *ngIf="!client._id">Create a new Client</h2>
-	<div *ngIf="client._id">
-		<label>id: </label>{{client._id}}
+	<h2 *ngIf="client._id">{{client.name | uppercase}} DETAILS</h2>
+	<h2 *ngIf="!client._id">CREATE NEW CLIENT</h2>
+	<div class="row">
+		<div *ngIf="client._id">
+			<div class="col-md-5 text-right">
+				<label>id: </label>
+			</div>
+			<div class="col-md-7 text-left">
+				{{client._id}}
+			</div>
+		</div>
 	</div>
-	<div>
-		<label>name: </label>
-		<input [(ngModel)]="client.name" placeholder="name" />
+	<div class="row">
+		<div class="col-md-5 text-right">
+			<label>name: </label>
+		</div>
+		<div class="col-md-7 text-left">
+			<input [(ngModel)]="client.name" placeholder="name" />
+		</div>
 	</div>
-	<div>
-		<label>phone: </label>
-		<input [(ngModel)]="client.phone" placeholder="phone" />
+	<div class="row">
+		<div class="col-md-5 text-right">
+			<label>phone: </label>
+		</div>
+		<div class="col-md-7 text-left">
+			<input [(ngModel)]="client.phone" placeholder="phone" />
+		</div>
 	</div>
-	<div>
-		<label>married: </label>
-		<input type="checkbox" [(ngModel)]="client.married" ng-selected="client.married" />
+	<div class="row">
+		<div class="col-md-5 text-right">
+			<label>married: </label>
+		</div>
+		<div class="col-md-7 text-left">
+			<input type="checkbox" [(ngModel)]="client.married" ng-selected="client.married" />
+		</div>
 	</div>
-	<div>
-		<label>sex: </label>
-		 <select [(ngModel)]="client.male">
-		 	<option value="true" ng-selected="client.male">male</option>
-		 	<option value="false" ng-selected="!client.male">female</option>
-		</select>
+	<div class="row">
+		<div class="col-md-5 text-right">
+			<label>sex: </label>
+		</div>
+		<div class="col-md-7 text-left">
+			<select [(ngModel)]="client.male">
+				<option value="true" ng-selected="client.male">male</option>
+				<option value="false" ng-selected="!client.male">female</option>
+			</select>
+		</div>
 	</div>
-	<div>
-		<label>age: </label>
-		<input [(ngModel)]="client.age" placeholder="age" type="number" />
+	<div class="row">
+		<div class="col-md-5 text-right">
+			<label>age: </label>
+		</div>
+		<div class="col-md-7 text-left">
+			<input [(ngModel)]="client.age" placeholder="age" type="number" />
+		</div>
 	</div>
-	<div>
-		<label>profession: </label>
-		<input [(ngModel)]="client.profession" placeholder="profession" />
+	<div class="row">
+		<div class="col-md-5 text-right">
+			<label>profession: </label>
+		</div>
+		<div class="col-md-7 text-left">
+			<input [(ngModel)]="client.profession" placeholder="profession" />
+		</div>
 	</div>
-	<button (click)="goBack()">Back</button>
-	<button *ngIf="client._id" (click)="save()">Save</button>
-	<button *ngIf="!client._id" (click)="create()">Save</button>
+	<div class="row">
+		<input class="btn btn-primary" type="button" value="Back" (click)="goBack()">
+		<input class="btn btn-primary" type="button" value="Save" *ngIf="client._id" (click)="save()">
+		<input class="btn btn-primary" type="button" value="Save" *ngIf="!client._id" (click)="create()">
+	</div>
 </div>
