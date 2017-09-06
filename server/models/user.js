@@ -22,6 +22,10 @@ const UserSchema   = new Schema({
     type: {
     	type: mongoose.Schema.Types.ObjectId,
         ref: 'Type'
+    },
+    image: {
+        data: Buffer,
+        contentType: String
     }
 });
 

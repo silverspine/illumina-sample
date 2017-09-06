@@ -38,6 +38,15 @@
 		</div>
 	</div>
 	<div class="row">
+		<div class="col-md-5 text-right">
+			<label>Image: </label>
+		</div>
+		<div class="col-md-7 text-left">
+			<input *ngIf="user.image" [(ngModel)]="user.image" placeholder="image" />
+			<input *ngIf="!user.image" type="file" [(ngModel)]="user.image"/><br>
+		</div>
+	</div>
+	<div class="row">
 		<input class="btn btn-primary" type="button" value="Back" (click)="goBack()">
 		<input class="btn btn-primary" type="button" value="Save" *ngIf="user._id" (click)="save()">
 		<input class="btn btn-primary" type="button" value="Save" *ngIf="!user._id" (click)="create()">

@@ -9,12 +9,36 @@ const router = express.Router();
 const config = require('../config/server');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
+const moment = require('moment');
+const fs = require('fs');
+const multer = require('multer');
+const upload = multer({
+	dest: '/uploads/',
+	onFileUploadStart: function (file) {
+		let imagePath = file.path;
+
+		gm(imagePath).resize(850, 850).quality(70).noProfile().write('public/uploads/spots/850x850/'+file.name+moment(), function (err) {
+			if (!err) {
+				gm(imagePath).resize(150, 150).quality(70).noProfile().write('public/uploads/spots/150x150/'+file.name+moment(), function (err) {
+					if (!err) {
+
+					}
+					else{
+						console.log('Error: '+err);
+					}
+				});
+			}else{
+				console.log('Error: '+err);
+			}
+		});
+	}
+});
 
 /**
  * Mongoose configuration block
  */
 mongoose.Promise = global.Promise;
-mongoose.connect(config.DB_URL);
+mongoose.connect(config.DB_URL, {useMongoClient: true});
 
 /**
  * moongose model imports
@@ -124,6 +148,20 @@ router.route('/authenticate')
 			sendError(err, res);
 		})
 	});
+
+// Adds multer middleware to handle file uploads
+router.use('/users', upload.single('image'));
+
+router.use((req, res, next) => {
+	console.log('%s %s %s', req.method, req.url, req.path);
+	console.log('headers:');
+	console.log(req.headers);
+	console.log('body:');
+	console.log(req.body);
+	console.log('file:');
+	console.log(req.file);
+	next();
+});
 
 ////////////////////////////////////////
 // Route middelware to verify a token //
@@ -370,6 +408,11 @@ router.route('/clients')
 	 * Create a new Client
 	 */
 	.post((req, res) => {
+		console.log('body:');
+		console.log(req.body);
+		console.log('file:');
+		console.log(req.file);
+
 		let formFields = req.body;
 		let client = new Client();
 		client.name = formFields.name;
