@@ -39,7 +39,7 @@
 	</div>
 	<div class="row">
 		<input class="btn btn-primary" type="button" value="Back" (click)="goBack()">
-		<input class="btn btn-primary" type="button" value="Save" *ngIf="user_id" (click)="save()">
-		<input class="btn btn-primary" type="button" value="Save" *ngIf="!user_id" (click)="create()">
+		<input class="btn btn-primary" type="button" value="Save" *ngIf="user._id" (click)="save()">
+		<input class="btn btn-primary" type="button" value="Save" *ngIf="!user._id" (click)="create()">
 	</div>
 </div>
