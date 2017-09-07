@@ -43,8 +43,8 @@ mongoose.connect(config.DB_URL, {useMongoClient: true});
 /**
  * moongose model imports
  */
+const Role = require('../models/role');
 const User = require('../models/user');
-const Type = require('../models/type');
 const Client = require('../models/client');
 
 /**
@@ -67,15 +67,15 @@ const sendError = (err, res, status = 500, data = []) => {
 };
 
 //////////////////////////////////////////////////////
-// Initialize app with a sample user and user types //
+// Initialize app with a sample user and user roles //
 //////////////////////////////////////////////////////
 router.route('/setup')
 	.get((req, res) => {
-		let adminType, testUser;
+		let adminRole, testUser;
 		
 		User.remove({})
 		.then(() => {
-			Type.remove({})
+			Role.remove({})
 			.catch( (err) => {
 				sendError(err, res, 409);
 			});
@@ -87,11 +87,11 @@ router.route('/setup')
 			});
 		})
 		.then(() => {
-			adminType = new Type();
-			adminType.name = 'admin';
-			adminType.save()
-			.then( type => {
-				adminType = type; // This asignation is done just to make sure that the adminType has the new _id
+			adminRole = new Role();
+			adminRole.name = 'admin';
+			adminRole.save()
+			.then( role => {
+				adminRole = role; // This asignation is done just to make sure that the adminRole has the new _id
 			})
 			.catch( err => {
 				sendError(err, res, 409);
@@ -101,7 +101,7 @@ router.route('/setup')
 			testUser = new User();
 			testUser.username = 'admin';
 			testUser.password = 'admin';
-			testUser.type=adminType._id;
+			testUser.role=adminRole._id;
 			testUser.save()
 			.then( user => {
 				let status = 201;
@@ -184,9 +184,9 @@ router.use((req, res, next) =>{
 });
 
 const currentUserIsAdmin = (req, res, next) => {
-	Type.findOne({name: 'admin'})
-	.then( type => {
-		if (req.decoded._doc.type == type._id)
+	Role.findOne({name: 'admin'})
+	.then( role => {
+		if (req.decoded._doc.role == role._id)
 			next();
 		else
 			sendError("Unauthorized Access.", res, 401);
@@ -197,21 +197,21 @@ const currentUserIsAdmin = (req, res, next) => {
 }
 
 ///////////////////////
-// User Types routes //
+// User Roles routes //
 ///////////////////////
-router.route('/types')
+router.route('/roles')
 	/**
-	 * Create a new User Type
+	 * Create a new User Role
 	 */
 	.post((req, res) => {
 		currentUserIsAdmin(req, res, () => {
 			let formFields = req.body;
-			let type = new Type();
-			type.name = formFields.name;
-			type.save()
-			.then((type) => {
+			let role = new Role();
+			role.name = formFields.name;
+			role.save()
+			.then((role) => {
 				let status = 201;
-				res.status(status).json(new BaseResponse(type, status));
+				res.status(status).json(new BaseResponse(role, status));
 			})
 			.catch((err) => {				
 				sendError(err, res, 409);
@@ -220,13 +220,13 @@ router.route('/types')
 	})
 
 	/**
-	 * List Types
+	 * List Roles
 	 */
 	.get((req, res) => {
 		currentUserIsAdmin(req, res, () => {
-			Type.find()
-			.then((types) => {
-	            res.json(new BaseResponse(types));
+			Role.find()
+			.then((roles) => {
+	            res.json(new BaseResponse(roles));
 	        })
 	        .catch((err) => {
 	            sendError(err, res);
@@ -236,20 +236,20 @@ router.route('/types')
 
 
 //////////////////////////
-// Specific Type routes //
+// Specific Role routes //
 //////////////////////////
-router.route('/types/:id')
+router.route('/roles/:id')
 	/**
-	 * Get a specific Type
+	 * Get a specific Role
 	 */
 	.get((req, res) => {
 		currentUserIsAdmin(req, res, () => {
-			Type.findById(req.params.id)
-			.then((type) => {
-				if (type)
-					res.json(new BaseResponse(type));
+			Role.findById(req.params.id)
+			.then((role) => {
+				if (role)
+					res.json(new BaseResponse(role));
 				else
-					sendError('Type not found',res, 404);
+					sendError('Role not found',res, 404);
 			})
 			.catch((err) => {
 				sendError(err,res);
@@ -258,17 +258,17 @@ router.route('/types/:id')
 	})
 
 	/**
-	 * Update a Type
+	 * Update a Role
 	 */
 	.put((req, res) => {
 		currentUserIsAdmin(req, res, () => {
 			let formFields = req.body;
-			Type.findById(req.params.id)
-			.then((type) => {
-				type.name = formFields.name;
-				type.save()
-				.then((type) => {
-					res.json(new BaseResponse(type));
+			Role.findById(req.params.id)
+			.then((role) => {
+				role.name = formFields.name;
+				role.save()
+				.then((role) => {
+					res.json(new BaseResponse(role));
 				})
 				.catch((err) => {
 					sendError(err, res);
@@ -281,11 +281,11 @@ router.route('/types/:id')
 	})
 
 	/**
-	 * Delete a Type
+	 * Delete a Role
 	 */
 	.delete((req, res) => {
 		currentUserIsAdmin(req, res, () => {
-			Type.remove({_id: req.params.id})
+			Role.remove({_id: req.params.id})
 			.then(() => {
 				let status = 201;
 				res.status(status).json(new BaseResponse([], status, 'Successfully deleted'));
@@ -310,7 +310,7 @@ router.route('/users')
 			let user = new User();
 			user.username = formFields.username;
 			user.password = formFields.password;
-			user.type = formFields.type;
+			user.role = formFields.role;
 			user.save()
 			.then((user) => {
 				let status = 201;
@@ -327,7 +327,7 @@ router.route('/users')
 	 */
 	.get((req, res) => {
 		User.find()
-		.populate('type')
+		.populate('role')
 		.exec()
 		.then((users) => {
             res.json(new BaseResponse(users));
@@ -346,7 +346,7 @@ router.route('/users/:id')
 	 */
 	.get((req, res) => {
 		User.findById(req.params.id)
-		.populate('type')
+		.populate('role')
 		.exec()
 		.then((user) => {
 			if (user)
@@ -369,7 +369,7 @@ router.route('/users/:id')
 			.then((user) => {
 				user.username = formFields.username;
 				user.password = formFields.password;
-				user.type = formFields.type;
+				user.role = formFields.role;
 				user.save()
 				.then((user) => {
 					res.json(new BaseResponse(user));

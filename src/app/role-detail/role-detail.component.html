@@ -1,0 +1,27 @@
+<div *ngIf="role">
+	<h2 *ngIf="role._id">{{role.name | uppercase}} DETAILS</h2>
+	<h2 *ngIf="!role._id">CREATE A NEW USER ROLE</h2>
+	<div class="row">
+		<div *ngIf="role._id">
+			<div class="col-md-5 text-right">
+				<label>id: </label>
+			</div>
+			<div class="col-md-7 text-left">
+				{{role._id}}
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-5 text-right">
+			<label>name: </label>
+		</div>
+		<div class="col-md-7 text-left">
+			<input [(ngModel)]="role.name" placeholder="name" />
+		</div>
+	</div>
+	<div class="row">
+		<input class="btn btn-primary" role="button" value="Back" (click)="goBack()">
+		<input class="btn btn-primary" role="button" value="Save" *ngIf="role._id" (click)="save()">
+		<input class="btn btn-primary" role="button" value="Save" *ngIf="!role._id" (click)="create()">
+	</div>
+</div>

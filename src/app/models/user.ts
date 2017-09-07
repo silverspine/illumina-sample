@@ -3,12 +3,12 @@
 // User Model // //
 //////////////// //
 ///////////////////
-import { Type } from './type';
+import { Role } from './role';
 
 export class User {
 	_id: string;
 	username: string;
 	password: string;
-	type: Type;
+	role: Role;
 	image: string;
 }

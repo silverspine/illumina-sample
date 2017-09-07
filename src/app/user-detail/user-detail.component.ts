@@ -5,8 +5,8 @@ import 'rxjs/add/operator/switchMap';
 
 import { User } from '../models/user';
 import { UserService } from '../services/user.service';
-import { Type } from '../models/type';
-import { TypeService } from '../services/type.service';
+import { Role } from '../models/role';
+import { RoleService } from '../services/role.service';
 
 @Component({
 	selector: 'app-user-detail',
@@ -16,11 +16,11 @@ import { TypeService } from '../services/type.service';
 
 export class UserDetailComponent implements OnInit {
 	@Input() user: User;
-	types: Type[];
+	roles: Role[];
 
 	constructor(
 		private userService: UserService,
-		private typeService: TypeService,
+		private roleService: RoleService,
 		private route: ActivatedRoute,
 		private location: Location,
 		private router: Router
@@ -31,7 +31,7 @@ export class UserDetailComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.typeService.getTypes().then(types => this.types = types);
+		this.roleService.getRoles().then(roles => this.roles = roles);
 		this.route.paramMap
 		.switchMap((params: ParamMap) => {
 			let id = params.get('id');
@@ -39,7 +39,7 @@ export class UserDetailComponent implements OnInit {
 				return this.userService.getUser(params.get('id'));
 			else{
 				let newUser = new User();
-				newUser.type = new Type();
+				newUser.role = new Role();
 				return Promise.resolve(newUser);
 			}
 		})

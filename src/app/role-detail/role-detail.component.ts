@@ -3,20 +3,20 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
 
-import { Type } from '../models/type';
-import { TypeService } from '../services/type.service';
+import { Role } from '../models/role';
+import { RoleService } from '../services/role.service';
 
 @Component({
-	selector: 'app-type-detail',
-	templateUrl: './type-detail.component.html',
-	styleUrls: ['./type-detail.component.css']
+	selector: 'app-role-detail',
+	templateUrl: './role-detail.component.html',
+	styleUrls: ['./role-detail.component.css']
 })
 
-export class TypeDetailComponent implements OnInit {
-	@Input() type: Type;
+export class RoleDetailComponent implements OnInit {
+	@Input() role: Role;
 
 	constructor(
-		private typeService: TypeService,
+		private roleService: RoleService,
 		private route: ActivatedRoute,
 		private location: Location,
 		private router: Router
@@ -31,11 +31,11 @@ export class TypeDetailComponent implements OnInit {
 		.switchMap((params: ParamMap) => {
 			let id = params.get('id');
 			if (id !== "new")
-				return this.typeService.getType(params.get('id'));
+				return this.roleService.getRole(params.get('id'));
 			else
-				return Promise.resolve(new Type());
+				return Promise.resolve(new Role());
 		})
-		.subscribe(type => this.type = type);
+		.subscribe(role => this.role = role);
 	}
 
 	goBack() {
@@ -43,12 +43,12 @@ export class TypeDetailComponent implements OnInit {
 	}
 
 	save() {
-		this.typeService.update(this.type)
+		this.roleService.update(this.role)
 		.then(() => this.goBack());
 	}
 
 	create(){
-		this.typeService.create(this.type)
+		this.roleService.create(this.role)
 		.then(() => this.goBack());
 	}
 }

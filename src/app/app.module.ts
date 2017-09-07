@@ -7,7 +7,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppRoutingModule } from './app-routing.module';
 
-import { TypeService } from './services/type.service';
+import { RoleService } from './services/role.service';
 import { UserService } from './services/user.service';
 import { ClientService } from './services/client.service';
 import { AuthGuard } from './guards/auth.guard';
@@ -17,8 +17,8 @@ import { ClientsComponent } from './clients/clients.component';
 import { ClientDetailComponent } from './client-detail/client-detail.component';
 import { UsersComponent } from './users/users.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
-import { TypesComponent } from './types/types.component';
-import { TypeDetailComponent } from './type-detail/type-detail.component';
+import { RolesComponent } from './roles/roles.component';
+import { RoleDetailComponent } from './role-detail/role-detail.component';
 import { LoginComponent } from './login/login.component';
 
 @NgModule({
@@ -28,8 +28,8 @@ import { LoginComponent } from './login/login.component';
 		ClientDetailComponent,
 		UsersComponent,
 		UserDetailComponent,
-		TypesComponent,
-		TypeDetailComponent,
+		RolesComponent,
+		RoleDetailComponent,
 		LoginComponent
 	],
 	imports: [
@@ -40,7 +40,7 @@ import { LoginComponent } from './login/login.component';
 		FormsModule
 	],
 	providers: [
-		TypeService,
+		RoleService,
 		UserService,
 		ClientService,
 		AuthGuard,

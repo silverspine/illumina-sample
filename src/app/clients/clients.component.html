@@ -4,6 +4,11 @@
 		<tr>
 			<th>#</th>
 			<th>Name</th>
+			<th>Phone</th>
+			<th>Marital Status</th>
+			<th>Sex</th>
+			<th>Age</th>
+			<th>Profession</th>
 			<th><input class="btn btn-primary btn-lg pull-right" type="button" value="+" (click)="add()"></th>
 		</tr>
 	</thead>
@@ -11,6 +16,11 @@
 		<tr *ngFor="let client of clients; let i = index ">
 			<th>{{i+1}}</th>
 			<td>{{client.name | uppercase}}</td>
+			<td>{{client.phone | uppercase}}</td>
+			<td>{{(client.married ? 'maried' : 'single') | uppercase }}</td>
+			<td>{{(client.male ? 'male' : 'female') | uppercase}}</td>
+			<td>{{client.age}}</td>
+			<td>{{client.profession | uppercase}}</td>
 			<td class="text-right">
 				<input class="btn btn-danger" type="button" value="x" (click)="delete(client)">
 				<input class="btn btn-primary" type="button" value="Details" (click)="gotoDetail(client)">

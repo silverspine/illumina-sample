@@ -23,9 +23,9 @@ const UserSchema   = new Schema({
     	type: String,
     	required: true
     },
-    type: {
+    role: {
     	type: mongoose.Schema.Types.ObjectId,
-        ref: 'Type'
+        ref: 'Role'
     },
     image: {
         data: Buffer,

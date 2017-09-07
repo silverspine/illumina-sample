@@ -1,16 +1,18 @@
-<h2>Users</h2>
+<h2>User Listing</h2>
 <table class="table table-hover">
 	<thead>
 		<tr>
 			<th>#</th>
 			<th>Username</th>
-			<th><input class="btn btn-primary btn-lg pull-right" type="button" value="+" (click)="add()"></th>
+			<th>Role</th>
+			<th><input class="btn btn-primary pull-right" type="button" value="+" (click)="add()"></th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr *ngFor="let user of users; let i = index ">
 			<th>{{i+1}}</th>
 			<td>{{user.username}}</td>
+			<td>{{user.role.name}}</td>
 			<td class="text-right">
 				<input class="btn btn-danger" type="button" value="x" (click)="delete(user)">
 				<input class="btn btn-primary" type="button" value="Details" (click)="gotoDetail(user)">

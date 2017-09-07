@@ -1,0 +1,20 @@
+<h2>Roles Listing</h2>
+<table class="table table-hover">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Name</th>
+			<th><input class="btn btn-primary pull-right" type="button" value="+" (click)="add()"></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr *ngFor="let role of roles; let i = index ">
+			<th>{{i+1}}</th>
+			<td>{{role.name}}</td>
+			<td class="text-right">
+				<input class="btn btn-danger" type="button" value="x" (click)="delete(role)">
+				<input class="btn btn-primary" type="button" value="Details" (click)="gotoDetail(role)">
+			</td>
+		</tr>
+	</tbody>
+</table>

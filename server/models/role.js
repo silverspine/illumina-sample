@@ -1,12 +1,12 @@
 ////////////////////////
 ///////////////////// //
-// User Type Model // //
+// User Role Model // //
 ///////////////////// //
 ////////////////////////
 const mongoose     = require('mongoose');
 const Schema       = mongoose.Schema;
 
-const TypeSchema   = new Schema({
+const RoleSchema   = new Schema({
     name: {
     	type: String,
     	required: true,
@@ -16,4 +16,4 @@ const TypeSchema   = new Schema({
     }
 });
 
-module.exports = mongoose.model('Type', TypeSchema);
+module.exports = mongoose.model('Role', RoleSchema);

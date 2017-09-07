@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TypeDetailComponent } from './type-detail.component';
+import { RoleDetailComponent } from './role-detail.component';
 
-describe('TypeDetailComponent', () => {
-  let component: TypeDetailComponent;
-  let fixture: ComponentFixture<TypeDetailComponent>;
+describe('RoleDetailComponent', () => {
+  let component: RoleDetailComponent;
+  let fixture: ComponentFixture<RoleDetailComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TypeDetailComponent ]
+      declarations: [ RoleDetailComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TypeDetailComponent);
+    fixture = TestBed.createComponent(RoleDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
