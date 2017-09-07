@@ -10,6 +10,7 @@ const config = require('../config/server');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
+const _ = require('lodash');
 const fs = require('fs');
 const multer = require('multer');
 const upload = multer({
@@ -124,6 +125,8 @@ router.route('/authenticate')
 		let formFields = req.body;
 
 		User.findOne({username: formFields.username})
+		.populate('role')
+		.exec()
 		.then( user => {
 			if (!user ){
 				res.json(new BaseResponse([], 200, 'User or password not match'));
@@ -136,8 +139,8 @@ router.route('/authenticate')
 	    				let token = jwt.sign(user, config.SECRET, {
 	    					expiresIn: 60*60*24 // Expires in one day
 	    				});
-	    				let response = new BaseResponse();
-	    				response.token = token;
+	    				user.hidePassword();
+	    				let response = new BaseResponse([{user: user, token: token}]);
 	    				res.json(response);
 	    			}
 			        return isMatch;
@@ -234,7 +237,6 @@ router.route('/roles')
 		})
 	});
 
-
 //////////////////////////
 // Specific Role routes //
 //////////////////////////
@@ -313,6 +315,7 @@ router.route('/users')
 			user.role = formFields.role;
 			user.save()
 			.then((user) => {
+				user.hidePassword();
 				let status = 201;
 				res.status(status).json(new BaseResponse(user, status));
 			})
@@ -330,6 +333,9 @@ router.route('/users')
 		.populate('role')
 		.exec()
 		.then((users) => {
+			_.each(users, (user) => {
+				user.hidePassword();
+			});
             res.json(new BaseResponse(users));
         })
         .catch((err) => {
@@ -349,9 +355,10 @@ router.route('/users/:id')
 		.populate('role')
 		.exec()
 		.then((user) => {
-			if (user)
+			if (user){
+				user.hidePassword();
 				res.json(new BaseResponse(user));
-			else
+			}else
 				sendError('User not found',res, 404);
 		})
 		.catch((err) => {
@@ -372,6 +379,7 @@ router.route('/users/:id')
 				user.role = formFields.role;
 				user.save()
 				.then((user) => {
+					user.hidePassword();
 					res.json(new BaseResponse(user));
 				})
 				.catch((err) => {

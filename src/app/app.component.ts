@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, AfterContentChecked } from '@angular/core';
+
+import { AuthenticationService } from './services/authentication.service';
 
 @Component({
 	selector: 'app-root',
@@ -6,6 +8,14 @@ import { Component } from '@angular/core';
 	styleUrls: ['./app.component.css']
 })
 
-export class AppComponent {
+export class AppComponent implements AfterContentChecked{
 	title = 'Illumina Sample';
+	currentUser = null;
+
+	constructor( private authenticationService: AuthenticationService ) {
+	}
+
+	ngAfterContentChecked(): void {
+		this.currentUser = this.authenticationService.user;
+	}
 }

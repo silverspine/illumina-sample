@@ -69,4 +69,9 @@ UserSchema.methods.comparePassword = function(candidatePassword, cb) {
     }
 };
 
+UserSchema.methods.hidePassword = function() {
+    this.password = "[obscured]";
+    delete this.password;
+};
+
 module.exports = mongoose.model('User', UserSchema);
