@@ -6,7 +6,7 @@
 			<th>Username</th>
 			<th>Role</th>
 			<th>
-				<button type="button" class="btn btn-success pull-right" (click)="add()">
+				<button type="button" class="btn btn-success pull-right" *ngIf="currentUser.role.name === 'admin'" (click)="add()">
 					<i class="fa fa-plus" aria-hidden="true"></i>
 				</button>
 			</th>
@@ -18,10 +18,10 @@
 			<td>{{user.username}}</td>
 			<td>{{user.role.name}}</td>
 			<td class="text-right">
-				<button type="button" class="btn btn-danger" (click)="delete(user)">
+				<button type="button" class="btn btn-danger" *ngIf="currentUser.role.name === 'admin'" (click)="delete(user)">
 					<i class="fa fa-times" aria-hidden="true"></i>
 				</button>
-				<button type="button" class="btn btn-primary" (click)="gotoDetail(user)">
+				<button type="button" class="btn btn-primary" *ngIf="currentUser._id === user._id || currentUser.role.name === 'admin'" (click)="gotoDetail(user)">
 					<i class="fa fa-pencil" aria-hidden="true"></i>
 				</button>
 			</td>

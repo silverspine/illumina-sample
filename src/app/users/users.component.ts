@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 
 import { User } from '../models/user';
 import { UserService } from '../services/user.service';
+import { AuthenticationService} from '../services/authentication.service';
 
 @Component({
 	selector: 'app-users',
@@ -10,19 +11,18 @@ import { UserService } from '../services/user.service';
 	styleUrls: ['./users.component.css']
 })
 export class UsersComponent implements OnInit {
+	currentUser: User;
 	selectedUser: User;
 	users: User[];
 
 	constructor(
 		private router: Router,
-		private userService: UserService
-	) {
-		if(!localStorage.getItem('currentUser')){
-			this.router.navigate(['/']);
-		}
-	}
+		private userService: UserService,
+		private authenticationService:AuthenticationService
+	) {}
 
 	ngOnInit() {
+		this.currentUser = this.authenticationService.user;
 		this.getUsers();
 	}
 

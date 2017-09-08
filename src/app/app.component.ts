@@ -18,4 +18,8 @@ export class AppComponent implements AfterContentChecked{
 	ngAfterContentChecked(): void {
 		this.currentUser = this.authenticationService.user;
 	}
+
+	printCurrentUser(): string {
+		return JSON.stringify(this.currentUser);
+	}
 }

@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 
 import { Role } from '../models/role';
 import { RoleService } from '../services/role.service';
+import { User } from '../models/user';
+import { AuthenticationService} from '../services/authentication.service';
 
 @Component({
 	selector: 'app-roles',
@@ -10,19 +12,21 @@ import { RoleService } from '../services/role.service';
 	styleUrls: ['./roles.component.css']
 })
 export class RolesComponent implements OnInit {
+	currentUser: User;
 	selectedRole: Role;
 	roles: Role[];
 
 	constructor(
 		private router: Router,
-		private roleService: RoleService
-	) {
-		if(!localStorage.getItem('currentUser')){
-			this.router.navigate(['/']);
-		}
-	}
+		private roleService: RoleService,
+		private authenticationService:AuthenticationService
+	) {}
 
 	ngOnInit() {
+		this.currentUser = this.authenticationService.user;
+		if(this.currentUser.role.name !== 'admin' ){
+			this.router.navigate(['/']);
+		}
 		this.getRoles();
 	}
 

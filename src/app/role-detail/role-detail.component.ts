@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
@@ -6,6 +6,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { Role } from '../models/role';
 import { RoleService } from '../services/role.service';
+import { User } from '../models/user';
+import { AuthenticationService} from '../services/authentication.service';
 
 @Component({
 	selector: 'app-role-detail',
@@ -14,7 +16,8 @@ import { RoleService } from '../services/role.service';
 })
 
 export class RoleDetailComponent implements OnInit {
-	@Input() role: Role;
+	currentUser: User;
+	role: Role;
 	roleForm: FormGroup;
 
 	constructor(
@@ -22,11 +25,9 @@ export class RoleDetailComponent implements OnInit {
 		private route: ActivatedRoute,
 		private location: Location,
 		private router: Router,
-		private fb: FormBuilder
+		private fb: FormBuilder,
+		private authenticationService:AuthenticationService
 		) {
-		if(!localStorage.getItem('currentUser')){
-			this.router.navigate(['/']);
-		}
 		this.createForm();
 	}
 
@@ -41,6 +42,10 @@ export class RoleDetailComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
+		this.currentUser = this.authenticationService.user;
+		if(this.currentUser.role.name !== 'admin' ){
+			this.router.navigate(['/']);
+		}
 		this.route.paramMap
 		.switchMap((params: ParamMap) => {
 			let id = params.get('id');

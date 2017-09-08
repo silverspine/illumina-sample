@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
@@ -14,7 +14,7 @@ import { ClientService } from '../services/client.service';
 })
 
 export class ClientDetailComponent implements OnInit {
-	@Input() client: Client;
+	client: Client;
 	clientForm: FormGroup;
 
 	constructor(

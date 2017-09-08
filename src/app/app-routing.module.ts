@@ -24,39 +24,48 @@ const routes: Routes = [
 	},
 	{
 		path: 'roles',
-		component: RolesComponent
+		component: RolesComponent,
+		canActivate: [AuthGuard]
 	},
 	{
 		path: 'roles/:id',
-		component: RoleDetailComponent
+		component: RoleDetailComponent,
+		canActivate: [AuthGuard]
 	},
 	{
 		path: 'roles/new',
-		component: RoleDetailComponent
+		component: RoleDetailComponent,
+		canActivate: [AuthGuard]
 	},
 	{
 		path: 'users',
-		component: UsersComponent
+		component: UsersComponent,
+		canActivate: [AuthGuard]
 	},
 	{
 		path: 'users/:id',
-		component: UserDetailComponent
+		component: UserDetailComponent,
+		canActivate: [AuthGuard]
 	},
 	{
 		path: 'users/:new',
-		component: UserDetailComponent
+		component: UserDetailComponent,
+		canActivate: [AuthGuard]
 	},
 	{
 		path: 'clients',
-		component: ClientsComponent
+		component: ClientsComponent,
+		canActivate: [AuthGuard]
 	},
 	{
 		path: 'clients/:id',
-		component: ClientDetailComponent
+		component: ClientDetailComponent,
+		canActivate: [AuthGuard]
 	},
 	{
 		path: 'clients/new',
-		component: ClientDetailComponent
+		component: ClientDetailComponent,
+		canActivate: [AuthGuard]
 	}
 ];
 
