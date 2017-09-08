@@ -120,7 +120,8 @@ export class UserDetailComponent implements OnInit {
 			username: formModel.username as string,
 			password: formModel.password as string,
 			role: formModel.role as Role,
-			image: formModel.image as string
+			image: formModel.image as string,
+			modifiedPassword: this.userForm.controls['password'].dirty as boolean
 		};
 
 		return saveUser;

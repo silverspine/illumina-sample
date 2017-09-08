@@ -386,7 +386,12 @@ router.route('/users/:id')
 			User.findById(req.params.id)
 			.then((user) => {
 				user.username = formFields.username;
-				user.password = formFields.password;
+				let passwordFieldDefined = typeof formFields.password !== 'undefined';
+				let modifiedPasswordFieldDefined = typeof formFields.modifiedPassword !== 'undefined';
+				let newPassword = (passwordFieldDefined && !modifiedPasswordFieldDefined);
+				let modifiedPassword = (passwordFieldDefined && modifiedPasswordFieldDefined && formFields.modifiedPassword);
+				if(newPassword || modifiedPassword)
+					user.password = formFields.password;
 				user.role = formFields.role;
 				user.save()
 				.then((user) => {

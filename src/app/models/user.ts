@@ -11,4 +11,5 @@ export class User {
 	password: string;
 	role: Role;
 	image: string;
+	modifiedPassword: boolean;
 }
