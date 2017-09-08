@@ -3,6 +3,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as _ from "lodash";
 
 import { User } from '../models/user';
 import { UserService } from '../services/user.service';
@@ -77,7 +78,7 @@ export class UserDetailComponent implements OnInit {
 				this.userForm.setValue({
 					username: this.user.username || '',
 					password: this.user.password || '',
-					role: this.user.role || this.roles[0],
+					role: _.find(this.roles, { 'name': user.role.name}) || this.roles[0],
 					image: this.user.image || ''
 				});
 			});

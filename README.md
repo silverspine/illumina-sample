@@ -10,7 +10,6 @@
 ## Implement
 image save
 fix bug on user update changes password
-user detail dont populate the type propperly
 
 ## nice to have
 1. angular componente activado con can activate
