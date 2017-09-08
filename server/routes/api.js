@@ -311,15 +311,24 @@ router.route('/users')
 	.post((req, res) => {
 		currentUserIsAdmin(req, res, () => {
 			let formFields = req.body;
+			if(typeof formFields.role !== 'object')
+				formFields.role = {_id: formFields.role};
 			let user = new User();
-			user.username = formFields.username;
-			user.password = formFields.password;
-			user.role = formFields.role;
-			user.save()
-			.then((user) => {
-				user.hidePassword();
-				let status = 201;
-				res.status(status).json(new BaseResponse(user, status));
+			Role.findOne(formFields.role)
+			.then((role) => {
+				user.username = formFields.username;
+				user.password = formFields.password;
+				user.role = formFields.role;
+				user.save()
+				.then((user) => {
+					user.hidePassword();
+					user.role = role;
+					let status = 201;
+					res.status(status).json(new BaseResponse(user, status));
+				})
+				.catch((err) => {				
+					sendError(err, res, 409);
+				});
 			})
 			.catch((err) => {				
 				sendError(err, res, 409);
@@ -418,11 +427,6 @@ router.route('/clients')
 	 * Create a new Client
 	 */
 	.post((req, res) => {
-		console.log('body:');
-		console.log(req.body);
-		console.log('file:');
-		console.log(req.file);
-
 		let formFields = req.body;
 		let client = new Client();
 		client.name = formFields.name;

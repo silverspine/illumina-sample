@@ -7,14 +7,11 @@
 3. On your browser go to `localhost:3000/api/setup` to initialize db with a dummy user and user type.
 4. Go to `localhost:3000` and log with the details `username: admin` `password: admin`.
 
-## add
-1. lodash
-2. moment
-
 ## Implement
 image save
-
-angular use forms and validation (template driven o reactive forms)
+fix bug on user update changes password
+user detail dont populate the type propperly
+dinamically hide buttons for user role
 
 ## nice to have
 1. angular componente activado con can activate

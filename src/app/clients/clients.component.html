@@ -9,7 +9,11 @@
 			<th>Sex</th>
 			<th>Age</th>
 			<th>Profession</th>
-			<th><input class="btn btn-primary btn-lg pull-right" type="button" value="+" (click)="add()"></th>
+			<th>
+				<button type="button" class="btn btn-success pull-right" (click)="add()">
+					<i class="fa fa-plus" aria-hidden="true"></i>
+				</button>
+			</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -22,8 +26,12 @@
 			<td>{{client.age}}</td>
 			<td>{{client.profession | uppercase}}</td>
 			<td class="text-right">
-				<input class="btn btn-danger" type="button" value="x" (click)="delete(client)">
-				<input class="btn btn-primary" type="button" value="Details" (click)="gotoDetail(client)">
+				<button type="button" class="btn btn-danger" (click)="delete(client)">
+					<i class="fa fa-times" aria-hidden="true"></i>
+				</button>
+				<button type="button" class="btn btn-primary" (click)="gotoDetail(client)">
+					<i class="fa fa-pencil" aria-hidden="true"></i>
+				</button>
 			</td>
 		</tr>
 	</tbody>

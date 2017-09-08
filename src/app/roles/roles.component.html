@@ -4,7 +4,11 @@
 		<tr>
 			<th>#</th>
 			<th>Name</th>
-			<th><input class="btn btn-primary pull-right" type="button" value="+" (click)="add()"></th>
+			<th>
+				<button type="button" class="btn btn-success pull-right" (click)="add()">
+					<i class="fa fa-plus" aria-hidden="true"></i>
+				</button>
+			</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -12,8 +16,12 @@
 			<th>{{i+1}}</th>
 			<td>{{role.name}}</td>
 			<td class="text-right">
-				<input class="btn btn-danger" type="button" value="x" (click)="delete(role)">
-				<input class="btn btn-primary" type="button" value="Details" (click)="gotoDetail(role)">
+				<button type="button" class="btn btn-danger" (click)="delete(role)">
+					<i class="fa fa-times" aria-hidden="true"></i>
+				</button>
+				<button type="button" class="btn btn-primary" (click)="gotoDetail(role)">
+					<i class="fa fa-pencil" aria-hidden="true"></i>
+				</button>
 			</td>
 		</tr>
 	</tbody>

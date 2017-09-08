@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { Role } from '../models/role';
 import { RoleService } from '../services/role.service';
@@ -14,16 +15,29 @@ import { RoleService } from '../services/role.service';
 
 export class RoleDetailComponent implements OnInit {
 	@Input() role: Role;
+	roleForm: FormGroup;
 
 	constructor(
 		private roleService: RoleService,
 		private route: ActivatedRoute,
 		private location: Location,
-		private router: Router
-	) {
+		private router: Router,
+		private fb: FormBuilder
+		) {
 		if(!localStorage.getItem('currentUser')){
 			this.router.navigate(['/']);
 		}
+		this.createForm();
+	}
+
+	createForm() {
+		this.roleForm = this.fb.group({
+			name: ['', [
+				Validators.required,
+				Validators.minLength(3),
+				Validators.maxLength(25)
+				]]
+		});
 	}
 
 	ngOnInit(): void {
@@ -35,7 +49,12 @@ export class RoleDetailComponent implements OnInit {
 			else
 				return Promise.resolve(new Role());
 		})
-		.subscribe(role => this.role = role);
+		.subscribe(role => {
+			this.role = role;
+			this.roleForm.setValue({
+				name: this.role.name || ''
+			});
+		});
 	}
 
 	goBack() {
@@ -50,5 +69,25 @@ export class RoleDetailComponent implements OnInit {
 	create(){
 		this.roleService.create(this.role)
 		.then(() => this.goBack());
+	}
+
+	onSubmit() {
+		this.role = this.prepareSaveRole();
+		if(this.role._id){
+			this.save();
+		}
+		else{
+			this.create();
+		}
+	}
+
+	prepareSaveRole(): Role {
+		const formModel = this.roleForm.value;
+
+		const saveRole: Role = {
+			_id: this.role._id,
+			name: formModel.name as string,
+		};
+		return saveRole;
 	}
 }

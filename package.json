@@ -28,6 +28,7 @@
     "bootstrap": "^3.3.7",
     "core-js": "^2.4.1",
     "express": "^4.15.4",
+    "font-awesome": "^4.7.0",
     "fs": "0.0.1-security",
     "jsonwebtoken": "^7.4.3",
     "lodash": "^4.17.4",

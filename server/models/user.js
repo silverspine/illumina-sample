@@ -25,7 +25,8 @@ const UserSchema   = new Schema({
     },
     role: {
     	type: mongoose.Schema.Types.ObjectId,
-        ref: 'Role'
+        ref: 'Role',
+        required: true
     },
     image: {
         data: Buffer,

@@ -7,7 +7,7 @@ import { Role } from '../models/role';
 @Injectable()
 export class RoleService {
 	private rolesUrl = 'api/roles';
-	private headers = new Headers({'Content-Role': 'application/json'});
+	private headers = new Headers({'Content-Type': 'application/json'});
 
 	constructor(private http: Http) {}
 
@@ -62,6 +62,7 @@ export class RoleService {
 		const url = `${this.rolesUrl}`;
 		if(localStorage.getItem('currentUser'))
 			this.headers.set('x-access-token', JSON.parse(localStorage.getItem('currentUser')).token);
+		JSON.stringify(role)
 		return this.http
 		.post(url, JSON.stringify(role), {headers: this.headers})
 		.toPromise()
