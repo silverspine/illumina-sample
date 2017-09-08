@@ -11,7 +11,7 @@
 			</label>
 			<label class="center-block">Role:
 				<select formControlName="role">
-					<option *ngFor="let role of roles" [ngValue]="role" [selected]="role.name === user.role._id">{{ role.name }}</option>
+					<option *ngFor="let role of roles" [ngValue]="role">{{ role.name }}</option>
 				</select>
 			</label>
 			<label class="center-block">Image:

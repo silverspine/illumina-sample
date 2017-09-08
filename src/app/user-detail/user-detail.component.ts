@@ -69,16 +69,19 @@ export class UserDetailComponent implements OnInit {
 					return this.userService.getUser(params.get('id'));
 				else{
 					let newUser = new User();
-					newUser.role = this.roles[0];
+					newUser.role = _.find(this.roles, { 'name': 'user'});
+					if(!newUser.role)
+						newUser.role = _.find(this.roles, { 'name': 'admin'});
 					return Promise.resolve(newUser);
 				}
 			})
 			.subscribe(user => {
 				this.user = user;
+				this.user.role = _.find(this.roles, { 'name': user.role.name});
 				this.userForm.setValue({
 					username: this.user.username || '',
 					password: this.user.password || '',
-					role: _.find(this.roles, { 'name': user.role.name}) || this.roles[0],
+					role: _.find(this.roles, { 'name': user.role.name}) || '',
 					image: this.user.image || ''
 				});
 			});
