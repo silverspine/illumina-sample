@@ -156,6 +156,7 @@ router.route('/authenticate')
 router.use('/users', upload.single('image'));
 
 router.use((req, res, next) => {
+	console.log('');
 	console.log('%s %s %s', req.method, req.url, req.path);
 	console.log('headers:');
 	console.log(req.headers);
@@ -189,7 +190,8 @@ router.use((req, res, next) =>{
 const currentUserIsAdmin = (req, res, next) => {
 	Role.findOne({name: 'admin'})
 	.then( role => {
-		if (req.decoded._doc.role == role._id)
+		let currentUser = req.decoded._doc;
+		if (currentUser.role._id == role._id)
 			next();
 		else
 			sendError("Unauthorized Access.", res, 401);
