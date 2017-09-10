@@ -9,8 +9,7 @@
 		</div>
 		<div class="form-group">
 			<input class="btn btn-primary" role="button" value="Back" (click)="goBack()">
-			<input type="submit" class="btn btn-success" role="button" value="Save" *ngIf="role._id" [disabled]="roleForm.pristine">
-			<input type="submit" class="btn btn-success" role="button" value="Save" *ngIf="!role._id" [disabled]="roleForm.pristine">
+			<input type="submit" class="btn btn-success" role="button" value="Save" [disabled]="roleForm.pristine">
 		</div>
 	</form>
 </div>

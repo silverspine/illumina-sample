@@ -8,8 +8,7 @@
 4. Go to `localhost:3000` and log with the details `username: admin` `password: admin`.
 
 ## Implement
-image save
-fix bug on user update changes password
+image save server side
 
 ## nice to have
 1. angular componente activado con can activate

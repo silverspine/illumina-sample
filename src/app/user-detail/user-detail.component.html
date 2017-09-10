@@ -14,14 +14,16 @@
 					<option *ngFor="let role of roles" [ngValue]="role">{{ role.name }}</option>
 				</select>
 			</label>
-			<label class="center-block">Image:
-				<input type="file" class="form-control" formControlName="image">
+			<label class="center-block">Image: </label>
+			<label class="btn btn-default">
+				<span *ngIf="!user.image">Browse</span>
+				<img width="200" heigh="200" id="image" [src]="user.image"/>
+				<input type="file" id="image" name="image" (change)="changeImage($event)" style="display: none;">
 			</label>
 		</div>
 		<div class="form-group">
 			<input class="btn btn-primary" role="button" value="Back" (click)="goBack()">
-			<input type="submit" class="btn btn-success" role="button" value="Save" *ngIf="user._id" [disabled]="userForm.pristine">
-			<input type="submit" class="btn btn-success" role="button" value="Save" *ngIf="!user._id" [disabled]="userForm.pristine">
+			<input type="submit" class="btn btn-success" role="button" value="Save" [disabled]="userForm.pristine">
 		</div>
 	</form>
 </div>

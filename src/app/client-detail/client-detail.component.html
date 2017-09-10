@@ -27,8 +27,7 @@
 		</div>
 		<div class="form-group">
 			<input class="btn btn-primary" role="button" value="Back" (click)="goBack()">
-			<input type="submit" class="btn btn-success" role="button" value="Save" *ngIf="client._id" [disabled]="clientForm.pristine">
-			<input type="submit" class="btn btn-success" role="button" value="Save" *ngIf="!client._id" [disabled]="clientForm.pristine">
+			<input type="submit" class="btn btn-success" role="button" value="Save" [disabled]="clientForm.pristine">
 		</div>
 	</form>
 </div>

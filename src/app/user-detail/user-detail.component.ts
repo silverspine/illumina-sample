@@ -38,17 +38,17 @@ export class UserDetailComponent implements OnInit {
 	createForm() {
 		this.userForm = this.fb.group({
 			username: ['', [
-				Validators.required,
-				Validators.minLength(3),
-				Validators.maxLength(25)
+			Validators.required,
+			Validators.minLength(3),
+			Validators.maxLength(25)
 			]],
 			password: ['', [
-				Validators.required,
-				Validators.minLength(3),
-				Validators.maxLength(40)
+			Validators.required,
+			Validators.minLength(3),
+			Validators.maxLength(40)
 			]],
 			role: ['', [
-				Validators.required
+			Validators.required
 			]],
 			image: ['']
 		});
@@ -125,5 +125,24 @@ export class UserDetailComponent implements OnInit {
 		};
 
 		return saveUser;
+	}
+
+	public changeImage(event: any) {
+		if(event.target.files.length > 0) {
+			let imageField = this.userForm.get('image');
+			let file = event.target.files[0];
+			let reader: FileReader = new FileReader();
+			let tagImage = document.getElementById('image');
+
+			reader.onloadend = (e: any) => {
+				this.user.image = reader.result;
+				imageField.setValue({image: reader.result});
+				imageField.markAsDirty();
+			}
+			file.load = (e: any) => {
+				tagImage.setAttribute('src', reader.result);
+			}
+			reader.readAsDataURL(file);
+		}
 	}
 }
