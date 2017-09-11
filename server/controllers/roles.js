@@ -4,6 +4,10 @@ const router = express.Router();
 const Role = require('../models/role');
 const BaseResponse = require('../helpers/base_response');
 const sendError = require('../helpers/error_handler');
+
+const tokenVerify = require('../middleware/token_verify');
+router.use('/', tokenVerify);
+
 const userAuthorized = require('../middleware/user_authorized');
 
 ///////////////////////

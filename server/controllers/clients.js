@@ -5,6 +5,9 @@ const Client = require('../models/client');
 const BaseResponse = require('../helpers/base_response');
 const sendError = require('../helpers/error_handler');
 
+const tokenVerify = require('../middleware/token_verify');
+router.use('/', tokenVerify);
+
 ///////////////////
 // Client routes //
 ///////////////////
