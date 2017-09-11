@@ -36,6 +36,7 @@ router.use('/', tokenVerify);
 const userAuthorized = require('../middleware/user_authorized');
 
 const User = require('../models/user');
+const Role = require('../models/role');
 const BaseResponse = require('../helpers/base_response');
 const sendError = require('../helpers/error_handler');
 
