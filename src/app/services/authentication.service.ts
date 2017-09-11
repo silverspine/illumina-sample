@@ -8,6 +8,7 @@ export class AuthenticationService {
 	private headers = new Headers({'Content-Type': 'application/json'});
 	private authUrl = 'api/authenticate';
 	public token: string;
+	public user: any;
 
 	constructor(private http: Http) {
 		// set token if saved in local storage
@@ -20,13 +21,15 @@ export class AuthenticationService {
 		return this.http.post(url, JSON.stringify({ username: username, password: password }), {headers: this.headers})
 			.map((response: Response) => {
 				// login successful if there's a jwt token in the response
-				let token = response.json() && response.json().token;
-				if (token) {
+				let data = response.json() && response.json().data;
+				if (Array.isArray(data) && data.length > 0) {
+					let res = data[0];
 					// set token property
-					this.token = token;
+					this.token = res.token;
+					this.user = res.user;
 
-					// store username and jwt token in local storage to keep user logged in between page refreshes
-					localStorage.setItem('currentUser', JSON.stringify({ username: username, token: token }));
+					// store user and jwt token in local storage to keep user logged in between page refreshes
+					localStorage.setItem('currentUser', JSON.stringify({ user: res.user, token: res.token }));
 
 					// return true to indicate successful login
 					return true;
@@ -40,6 +43,7 @@ export class AuthenticationService {
 	logout(): void {
 		// clear token remove user from local storage to log user out
 		this.token = null;
+		this.user = null;
 		localStorage.removeItem('currentUser');
 	}
 }

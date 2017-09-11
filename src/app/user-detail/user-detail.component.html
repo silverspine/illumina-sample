@@ -1,45 +1,29 @@
 <div *ngIf="user">
 	<h2 *ngIf="user._id">{{user.username | uppercase}} DETAILS</h2>
 	<h2 *ngIf="!user._id">CREATE A NEW USER</h2>
-	<div class="row">
-		<div *ngIf="user._id">
-			<div class="col-md-5 text-right">
-				<label>id: </label>
-			</div>
-			<div class="col-md-7 text-left">
-				{{user._id}}
-			</div>
+	<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+		<div class="form-group">
+			<label class="center-block">Username:
+				<input class="form-control" formControlName="username">
+			</label>
+			<label class="center-block">Password:
+				<input type="password" class="form-control" formControlName="password">
+			</label>
+			<label class="center-block">Role:
+				<select formControlName="role">
+					<option *ngFor="let role of roles" [ngValue]="role">{{ role.name }}</option>
+				</select>
+			</label>
+			<label class="center-block">Image: </label>
+			<label class="btn btn-default">
+				<span *ngIf="!user.image">Browse</span>
+				<img width="200" heigh="200" id="image" [src]="user.image"/>
+				<input type="file" id="image" name="image" (change)="changeImage($event)" style="display: none;" accept="image/*">
+			</label>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-5 text-right">
-			<label>username: </label>
+		<div class="form-group">
+			<input class="btn btn-primary" role="button" value="Back" (click)="goBack()">
+			<input type="submit" class="btn btn-success" role="button" value="Save" [disabled]="userForm.pristine">
 		</div>
-		<div class="col-md-7 text-left">
-			<input [(ngModel)]="user.username" placeholder="username" />
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-5 text-right">
-			<label>password: </label>
-		</div>
-		<div class="col-md-7 text-left">
-			<input type="password" [(ngModel)]="user.password" placeholder="password" />
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-5 text-right">
-			<label>type: </label>
-		</div>
-		<div class="col-md-7 text-left">
-			<select [(ngModel)]="user.type._id">
-		 	<option *ngFor="let type of types" [value]="type._id" ng-selected="type._id === user.type._id">{{ type.name }}</option>
-		</select>
-		</div>
-	</div>
-	<div class="row">
-		<input class="btn btn-primary" type="button" value="Back" (click)="goBack()">
-		<input class="btn btn-primary" type="button" value="Save" *ngIf="user._id" (click)="save()">
-		<input class="btn btn-primary" type="button" value="Save" *ngIf="!user._id" (click)="create()">
-	</div>
+	</form>
 </div>

@@ -1,70 +1,33 @@
 <div *ngIf="client">
 	<h2 *ngIf="client._id">{{client.name | uppercase}} DETAILS</h2>
 	<h2 *ngIf="!client._id">CREATE NEW CLIENT</h2>
-	<div class="row">
-		<div *ngIf="client._id">
-			<div class="col-md-5 text-right">
-				<label>id: </label>
-			</div>
-			<div class="col-md-7 text-left">
-				{{client._id}}
-			</div>
+	<form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
+		<div class="form-group">
+			<label class="center-block">Name:
+				<input class="form-control" formControlName="name">
+			</label>
+			<label class="center-block">Phone:
+				<input type="tel" class="form-control" formControlName="phone">
+			</label>
+			<label class="center-block">
+				<input type="checkbox" formControlName="married" value="true">Married
+			</label>
+			<label class="center-block">Sex:
+				<select formControlName="male">
+					<option value="true" ng-selected="client.male">Male</option>
+					<option value="false" ng-selected="!client.male">Female</option>
+				</select>
+			</label>
+			<label class="center-block">Age:
+				<input type="number" min="1" max="100" class="form-control" formControlName="age">
+			</label>
+			<label class="center-block">Profession:
+				<input class="form-control" formControlName="profession">
+			</label>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-5 text-right">
-			<label>name: </label>
+		<div class="form-group">
+			<input class="btn btn-primary" role="button" value="Back" (click)="goBack()">
+			<input type="submit" class="btn btn-success" role="button" value="Save" [disabled]="clientForm.pristine">
 		</div>
-		<div class="col-md-7 text-left">
-			<input [(ngModel)]="client.name" placeholder="name" />
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-5 text-right">
-			<label>phone: </label>
-		</div>
-		<div class="col-md-7 text-left">
-			<input [(ngModel)]="client.phone" placeholder="phone" />
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-5 text-right">
-			<label>married: </label>
-		</div>
-		<div class="col-md-7 text-left">
-			<input type="checkbox" [(ngModel)]="client.married" ng-selected="client.married" />
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-5 text-right">
-			<label>sex: </label>
-		</div>
-		<div class="col-md-7 text-left">
-			<select [(ngModel)]="client.male">
-				<option value="true" ng-selected="client.male">male</option>
-				<option value="false" ng-selected="!client.male">female</option>
-			</select>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-5 text-right">
-			<label>age: </label>
-		</div>
-		<div class="col-md-7 text-left">
-			<input [(ngModel)]="client.age" placeholder="age" type="number" />
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-5 text-right">
-			<label>profession: </label>
-		</div>
-		<div class="col-md-7 text-left">
-			<input [(ngModel)]="client.profession" placeholder="profession" />
-		</div>
-	</div>
-	<div class="row">
-		<input class="btn btn-primary" type="button" value="Back" (click)="goBack()">
-		<input class="btn btn-primary" type="button" value="Save" *ngIf="client._id" (click)="save()">
-		<input class="btn btn-primary" type="button" value="Save" *ngIf="!client._id" (click)="create()">
-	</div>
+	</form>
 </div>

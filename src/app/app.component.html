@@ -1,17 +1,17 @@
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default" *ngIf="currentUser">
 	<div class="container-fluid">
 		<div class="navbar-header">
-			<a class="navbar-brand" href="#">{{title}}</a>
+			<span class="navbar-brand">{{title}}</span>
 		</div>
 		<ul class="nav navbar-nav">
 			<li routerLinkActive="active">
-				<a class="nav-link" routerLink="/types" >User Types</a>
+				<a class="nav-link" routerLink="/clients">Clients</a>
 			</li>
 			<li routerLinkActive="active">
 				<a class="nav-link" routerLink="/users">Users</a>
 			</li>
 			<li routerLinkActive="active">
-				<a class="nav-link" routerLink="/clients">Clients</a>
+				<a class="nav-link" routerLink="/roles" *ngIf="currentUser.role.name === 'admin'">Roles</a>
 			</li>
 		</ul>
 		<ul class="nav navbar-nav navbar-right">
@@ -21,11 +21,10 @@
 		</ul>
 	</div>
 </nav>
-<div class="jumbotron text-center">
-	<!-- main app container -->
-	<div class="container">
-		<div class="col-sm-8 col-sm-offset-2">
-			<router-outlet></router-outlet>
-		</div>
+
+<!-- main app container -->
+<section class="container">
+	<div class="col-sm-8 col-sm-offset-2">
+		<router-outlet></router-outlet>
 	</div>
-</div>
+</section>
