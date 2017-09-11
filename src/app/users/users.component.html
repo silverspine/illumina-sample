@@ -5,6 +5,7 @@
 			<th>#</th>
 			<th>Username</th>
 			<th>Role</th>
+			<th>Image</th>
 			<th>
 				<button type="button" class="btn btn-success pull-right" *ngIf="currentUser.role.name === 'admin'" (click)="add()">
 					<i class="fa fa-plus" aria-hidden="true"></i>
@@ -17,6 +18,7 @@
 			<th>{{i+1}}</th>
 			<td>{{user.username}}</td>
 			<td>{{user.role.name}}</td>
+			<td><img src="{{user.image}}" class="img-thumbnail img-fluid" *ngIf="user.image"></td>
 			<td class="text-right">
 				<button type="button" class="btn btn-danger" *ngIf="currentUser.role.name === 'admin'" (click)="delete(user)">
 					<i class="fa fa-times" aria-hidden="true"></i>
