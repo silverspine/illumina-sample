@@ -4,10 +4,20 @@
 const express = require('express');
 const router = express.Router();
 
+//////////////////
+// Model import //
+//////////////////
 const Client = require('../models/client');
+
+////////////////////
+// Helper imports //
+////////////////////
 const BaseResponse = require('../helpers/base_response');
 const sendError = require('../helpers/error_handler');
 
+///////////////////////////////
+// Authentication middleware //
+///////////////////////////////
 const tokenVerify = require('../middleware/token_verify');
 router.use('/', tokenVerify);
 

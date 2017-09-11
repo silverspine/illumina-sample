@@ -4,12 +4,14 @@ import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as _ from "lodash";
+import { FileUploader } from 'ng2-file-upload/ng2-file-upload';
 
 import { User } from '../models/user';
 import { UserService } from '../services/user.service';
 import { Role } from '../models/role';
 import { RoleService } from '../services/role.service';
 import { AuthenticationService } from '../services/authentication.service';
+import { ImageService } from '../services/image.service';
 
 @Component({
 	selector: 'app-user-detail',
@@ -22,6 +24,7 @@ export class UserDetailComponent implements OnInit {
 	user: User;
 	roles: Role[];
 	userForm: FormGroup;
+	uploader:FileUploader;
 
 	constructor(
 		private userService: UserService,
@@ -30,12 +33,14 @@ export class UserDetailComponent implements OnInit {
 		private location: Location,
 		private router: Router,
 		private fb: FormBuilder,
-		private authenticationService:AuthenticationService
+		private authenticationService:AuthenticationService,
+		private imageService: ImageService
 		) {
 		this.createForm();
+		this.uploader = new FileUploader({url: this.imageService.imagesUrl, itemAlias: 'image'})
 	}
 
-	createForm() {
+	createForm(): void {
 		this.userForm = this.fb.group({
 			username: ['', [
 			Validators.required,
@@ -87,23 +92,35 @@ export class UserDetailComponent implements OnInit {
 				});
 			});
 		});
+
+		/**
+		 * ng2-uploader
+		 */
+		//override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
+		this.uploader.onAfterAddingFile = (file)=> { file.withCredentials = false; };
+		//overide the onCompleteItem property of the uploader so we are 
+		//able to deal with the server response.
+		this.uploader.onCompleteItem = (item:any, response:any, status:any, headers:any) => {
+			this.user.image = JSON.parse(response).data;
+			this.changeImage();
+		};
 	}
 
-	goBack() {
+	goBack(): void {
 		this.location.back();
 	}
 
-	save() {
+	save(): void {
 		this.userService.update(this.user)
 		.then(() => this.goBack());
 	}
 
-	create(){
+	create(): void {
 		this.userService.create(this.user)
 		.then(() => this.goBack());
 	}
 
-	onSubmit() {
+	onSubmit(): void {
 		this.user = this.prepareSaveUser();
 		if(this.user._id){
 			this.save();
@@ -128,22 +145,19 @@ export class UserDetailComponent implements OnInit {
 		return saveUser;
 	}
 
-	public changeImage(event: any) {
+	selectedImage(event: any): void {
 		if(event.target.files.length > 0) {
-			let imageField = this.userForm.get('image');
-			let file = event.target.files[0];
-			let reader: FileReader = new FileReader();
 			let tagImage = document.getElementById('image');
-
-			reader.onloadend = (e: any) => {
-				this.user.image = reader.result;
-				imageField.setValue(reader.result);
-				imageField.markAsDirty();
-			}
-			file.load = (e: any) => {
-				tagImage.setAttribute('src', reader.result);
-			}
-			reader.readAsDataURL(file);
+			tagImage.setAttribute('src', 'data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==');
+			this.uploader.uploadAll();
 		}
+	}
+
+	changeImage(): void {
+		let tagImage = document.getElementById('image');
+		let imageField = this.userForm.get('image');
+		tagImage.setAttribute('src', this.user.image);
+		imageField.setValue(this.user.image);
+		imageField.markAsDirty();
 	}
 }
