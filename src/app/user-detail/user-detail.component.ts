@@ -56,23 +56,23 @@ export class UserDetailComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.currentUser = this.authenticationService.user;
-		if(this.currentUser.role.name !== 'admin' ){
-			this.router.navigate(['/']);
-		}
 		this.roleService.getRoles()
 		.then(roles => this.roles = roles)
+		.catch( () => this.roles = [this.currentUser.role])
 		.then( () => {
 			this.route.paramMap
 			.switchMap((params: ParamMap) => {
 				let id = params.get('id');
-				if (id !== "new")
+				if (id !== "new" && this.currentUser._id === id)
 					return this.userService.getUser(params.get('id'));
-				else{
+				else if(this.currentUser.role.name === 'admin') {
 					let newUser = new User();
 					newUser.role = _.find(this.roles, { 'name': 'user'});
 					if(!newUser.role)
 						newUser.role = _.find(this.roles, { 'name': 'admin'});
 					return Promise.resolve(newUser);
+				}else{
+					this.router.navigate(['/']);
 				}
 			})
 			.subscribe(user => {
