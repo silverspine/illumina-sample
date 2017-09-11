@@ -8,7 +8,6 @@ const sendError = require('../helpers/error_handler');
 // Route middelware to verify a token //
 ////////////////////////////////////////
 router.use((req, res, next) =>{
-	console.log("TokenVerify");
 	let token = req.body.token || req.query.token || req.headers['x-access-token'];
 
 	if(token){

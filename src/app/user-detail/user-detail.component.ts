@@ -63,8 +63,9 @@ export class UserDetailComponent implements OnInit {
 			this.route.paramMap
 			.switchMap((params: ParamMap) => {
 				let id = params.get('id');
-				if (id !== "new" && this.currentUser._id === id)
+				if (id !== "new" && (this.currentUser._id === id || this.currentUser.role.name === 'admin')){
 					return this.userService.getUser(params.get('id'));
+				}
 				else if(this.currentUser.role.name === 'admin') {
 					let newUser = new User();
 					newUser.role = _.find(this.roles, { 'name': 'user'});

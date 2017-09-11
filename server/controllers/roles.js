@@ -1,3 +1,6 @@
+////////////////////////////////
+// Roles resource controlloer //
+////////////////////////////////
 const express = require('express');
 const router = express.Router();
 

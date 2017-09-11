@@ -1,6 +1,10 @@
+///////////////////////////////
+// users resource controller //
+///////////////////////////////
 const express = require('express');
 const router = express.Router();
 const _ = require('lodash');
+const moment = require('moment');
 const fs = require('fs');
 const multer = require('multer');
 const upload = multer({
