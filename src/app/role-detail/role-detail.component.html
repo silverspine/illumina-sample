@@ -1,0 +1,15 @@
+<div *ngIf="role">
+	<h2 *ngIf="role._id">{{role.name | uppercase}} DETAILS</h2>
+	<h2 *ngIf="!role._id">CREATE A NEW USER ROLE</h2>
+	<form [formGroup]="roleForm" (ngSubmit)="onSubmit()" novalidate>
+		<div class="form-group">
+			<label class="center-block">Name:
+				<input class="form-control" formControlName="name">
+			</label>
+		</div>
+		<div class="form-group">
+			<input class="btn btn-primary" role="button" value="Back" (click)="goBack()">
+			<input type="submit" class="btn btn-success" role="button" value="Save" [disabled]="roleForm.pristine">
+		</div>
+	</form>
+</div>

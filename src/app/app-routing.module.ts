@@ -2,8 +2,8 @@ import { NgModule }             from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { LoginComponent }   from './login/login.component';
-import { TypesComponent }      from './types/types.component';
-import { TypeDetailComponent }  from './type-detail/type-detail.component';
+import { RolesComponent }      from './roles/roles.component';
+import { RoleDetailComponent }  from './role-detail/role-detail.component';
 import { UsersComponent }      from './users/users.component';
 import { UserDetailComponent }  from './user-detail/user-detail.component';
 import { ClientsComponent }      from './clients/clients.component';
@@ -23,40 +23,49 @@ const routes: Routes = [
 		component: LoginComponent
 	},
 	{
-		path: 'types',
-		component: TypesComponent
+		path: 'roles',
+		component: RolesComponent,
+		canActivate: [AuthGuard]
 	},
 	{
-		path: 'types/:id',
-		component: TypeDetailComponent
+		path: 'roles/:id',
+		component: RoleDetailComponent,
+		canActivate: [AuthGuard]
 	},
 	{
-		path: 'types/new',
-		component: TypeDetailComponent
+		path: 'roles/new',
+		component: RoleDetailComponent,
+		canActivate: [AuthGuard]
 	},
 	{
 		path: 'users',
-		component: UsersComponent
+		component: UsersComponent,
+		canActivate: [AuthGuard]
 	},
 	{
 		path: 'users/:id',
-		component: UserDetailComponent
+		component: UserDetailComponent,
+		canActivate: [AuthGuard]
 	},
 	{
 		path: 'users/:new',
-		component: UserDetailComponent
+		component: UserDetailComponent,
+		canActivate: [AuthGuard]
 	},
 	{
 		path: 'clients',
-		component: ClientsComponent
+		component: ClientsComponent,
+		canActivate: [AuthGuard]
 	},
 	{
 		path: 'clients/:id',
-		component: ClientDetailComponent
+		component: ClientDetailComponent,
+		canActivate: [AuthGuard]
 	},
 	{
 		path: 'clients/new',
-		component: ClientDetailComponent
+		component: ClientDetailComponent,
+		canActivate: [AuthGuard]
 	}
 ];
 

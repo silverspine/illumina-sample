@@ -1,7 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { Client } from '../models/client';
 import { ClientService } from '../services/client.service';
@@ -13,17 +14,46 @@ import { ClientService } from '../services/client.service';
 })
 
 export class ClientDetailComponent implements OnInit {
-	@Input() client: Client;
+	client: Client;
+	clientForm: FormGroup;
 
 	constructor(
 		private clientService: ClientService,
 		private route: ActivatedRoute,
 		private location: Location,
-		private router: Router
-	) {
+		private router: Router,
+		private fb: FormBuilder
+		) {
 		if(!localStorage.getItem('currentUser')){
 			this.router.navigate(['/']);
 		}
+		this.createForm();
+	}
+
+	createForm() {
+		let formats = "(999)999-9999|999-999-9999|9999999999";
+		let exp = RegExp("^(" +
+			formats
+			.replace(/([\(\)])/g, "\\$1")
+			.replace(/9/g,"\\d") +
+			")$");
+
+		this.clientForm = this.fb.group({
+			name: ['', [
+				Validators.required,
+				Validators.minLength(3),
+				Validators.maxLength(25)
+			]],
+			phone: ['', [
+				Validators.pattern(exp)
+			]],
+			married: [false],
+			male: [true],
+			age: [''],
+			profession: ['', [
+				Validators.maxLength(25)
+			]]
+		});
 	}
 
 	ngOnInit(): void {
@@ -35,7 +65,17 @@ export class ClientDetailComponent implements OnInit {
 			else
 				return Promise.resolve(new Client());
 		})
-		.subscribe(client => this.client = client);
+		.subscribe(client => {
+			this.client = client;
+			this.clientForm.setValue({
+				name: this.client.name || '',
+				phone: this.client.phone || '',
+				married: this.client.married || false,
+				male: this.client.male || true,
+				age: this.client.age || '',
+				profession: this.client.profession || ''
+			});
+		});
 	}
 
 	goBack() {
@@ -50,5 +90,30 @@ export class ClientDetailComponent implements OnInit {
 	create(){
 		this.clientService.create(this.client)
 		.then(() => this.goBack());
+	}
+
+	onSubmit() {
+		this.client = this.prepareSaveClient();
+		if(this.client._id){
+			this.save();
+		}
+		else{
+			this.create();
+		}
+	}
+
+	prepareSaveClient(): Client {
+		const formModel = this.clientForm.value;
+
+		const saveClient: Client = {
+			_id: this.client._id,
+			name: formModel.name as string,
+			phone: formModel.phone as string,
+			married: formModel.married as boolean,
+			male: formModel.male as boolean,
+			age: formModel.age as number,
+			profession: formModel.profession as string,
+		};
+		return saveClient;
 	}
 }
