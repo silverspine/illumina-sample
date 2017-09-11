@@ -18,7 +18,7 @@
 			<label class="btn btn-default">
 				<span *ngIf="!user.image">Browse</span>
 				<img width="200" heigh="200" id="image" [src]="user.image"/>
-				<input type="file" id="image" name="image" (change)="changeImage($event)" style="display: none;">
+				<input type="file" id="image" name="image" (change)="changeImage($event)" style="display: none;" accept="image/*">
 			</label>
 		</div>
 		<div class="form-group">

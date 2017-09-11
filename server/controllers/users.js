@@ -59,6 +59,8 @@ router.route('/')
 				user.username = formFields.username;
 				user.password = formFields.password;
 				user.role = formFields.role;
+				if(formFields.image)
+					user.image = formFields.image;
 				user.save()
 				.then((user) => {
 					user.hidePassword();
@@ -135,6 +137,9 @@ router.route('/:id')
 				if(newPassword || modifiedPassword)
 					user.password = formFields.password;
 				user.role = formFields.role;
+				if(formFields.image){
+					user.image = formFields.image;
+				}
 				user.save()
 				.then((user) => {
 					user.hidePassword();

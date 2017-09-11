@@ -137,7 +137,7 @@ export class UserDetailComponent implements OnInit {
 
 			reader.onloadend = (e: any) => {
 				this.user.image = reader.result;
-				imageField.setValue({image: reader.result});
+				imageField.setValue(reader.result);
 				imageField.markAsDirty();
 			}
 			file.load = (e: any) => {
