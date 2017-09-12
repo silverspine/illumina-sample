@@ -1,28 +1,32 @@
 <div *ngIf="user">
-	<h2 *ngIf="user._id">{{user.username | uppercase}} DETAILS</h2>
-	<h2 *ngIf="!user._id">CREATE A NEW USER</h2>
+	<h2 class="text-right" *ngIf="user._id">{{user.username | uppercase}} DETAILS</h2>
+	<h2 class="text-right" *ngIf="!user._id">CREATE A NEW USER</h2>
 	<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
 		<div class="form-group">
-			<label class="center-block">Username:
-				<input class="form-control" formControlName="username">
-			</label>
-			<label class="center-block">Password:
-				<input type="password" class="form-control" formControlName="password">
-			</label>
-			<label class="center-block">Role:
-				<select formControlName="role">
-					<option *ngFor="let role of roles" [ngValue]="role">{{ role.name }}</option>
-				</select>
-			</label>
-			<label class="center-block">Image: </label>
-			<label class="btn btn-default">
-				<span *ngIf="!user.image">Browse <i class="fa fa-spinner fa-spin fa-3x fa-fw hide"></i></span>
-				<img width="200" heigh="200" id="image" class="img-fluid" [src]="user.image"/>
-				<input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedImage($event)"  style="display: none;" accept="image/*"/>
-			</label>
+			<div class="col-sm-5">
+				<label class="center-block">Image: </label>
+				<label class="btn btn-default">
+					<span *ngIf="!user.image">Browse <i class="fa fa-spinner fa-spin fa-3x fa-fw hide"></i></span>
+					<img width="200" heigh="200" id="image" class="img-fluid" [src]="user.image"/>
+					<input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedImage($event)"  style="display: none;" accept="image/*"/>
+				</label>
+			</div>
+			<div class="col-sm-7">
+				<label class="center-block">Username:
+					<input class="form-control" formControlName="username">
+				</label>
+				<label class="center-block">Password:
+					<input type="password" class="form-control" formControlName="password">
+				</label>
+				<label class="center-block">Role:
+					<select formControlName="role">
+						<option *ngFor="let role of roles" [ngValue]="role">{{ role.name }}</option>
+					</select>
+				</label>
+			</div>
 		</div>
-		<div class="form-group">
-			<input class="btn btn-primary" role="button" value="Back" (click)="goBack()">
+		<div class="form-group text-right">
+			<input type="button" class="btn btn-primary" role="button" value="Back" (click)="goBack()">
 			<input type="submit" class="btn btn-success" role="button" value="Save" [disabled]="userForm.pristine">
 		</div>
 	</form>

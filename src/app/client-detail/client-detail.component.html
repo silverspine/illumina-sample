@@ -1,6 +1,6 @@
 <div *ngIf="client">
-	<h2 *ngIf="client._id">{{client.name | uppercase}} DETAILS</h2>
-	<h2 *ngIf="!client._id">CREATE NEW CLIENT</h2>
+	<h2 class="text-right" *ngIf="client._id">{{client.name | uppercase}} DETAILS</h2>
+	<h2 class="text-right" *ngIf="!client._id">CREATE NEW CLIENT</h2>
 	<form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
 		<div class="form-group">
 			<label class="center-block">Name:
@@ -25,8 +25,8 @@
 				<input class="form-control" formControlName="profession">
 			</label>
 		</div>
-		<div class="form-group">
-			<input class="btn btn-primary" role="button" value="Back" (click)="goBack()">
+		<div class="form-group text-right">
+			<input type="button" class="btn btn-primary" role="button" value="Back" (click)="goBack()">
 			<input type="submit" class="btn btn-success" role="button" value="Save" [disabled]="clientForm.pristine">
 		</div>
 	</form>
