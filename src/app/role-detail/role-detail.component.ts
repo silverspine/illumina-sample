@@ -41,6 +41,8 @@ export class RoleDetailComponent implements OnInit {
 		});
 	}
 
+	get name() { return this.roleForm.get('name'); }
+
 	ngOnInit(): void {
 		this.currentUser = this.authenticationService.user;
 		if(this.currentUser.role.name !== 'admin' ){

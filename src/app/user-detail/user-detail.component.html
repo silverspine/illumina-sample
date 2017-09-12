@@ -1,29 +1,76 @@
 <div *ngIf="user">
-	<h2 *ngIf="user._id">{{user.username | uppercase}} DETAILS</h2>
-	<h2 *ngIf="!user._id">CREATE A NEW USER</h2>
+	<h2 class="text-right" *ngIf="user._id">{{user.username | uppercase}} DETAILS</h2>
+	<h2 class="text-right" *ngIf="!user._id">CREATE A NEW USER</h2>
 	<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-		<div class="form-group">
-			<label class="center-block">Username:
-				<input class="form-control" formControlName="username">
-			</label>
-			<label class="center-block">Password:
-				<input type="password" class="form-control" formControlName="password">
-			</label>
-			<label class="center-block">Role:
-				<select formControlName="role">
-					<option *ngFor="let role of roles" [ngValue]="role">{{ role.name }}</option>
-				</select>
-			</label>
-			<label class="center-block">Image: </label>
-			<label class="btn btn-default">
-				<span *ngIf="!user.image">Browse <i class="fa fa-spinner fa-spin fa-3x fa-fw hide"></i></span>
-				<img width="200" heigh="200" id="image" class="img-fluid" [src]="user.image"/>
-				<input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedImage($event)"  style="display: none;" accept="image/*"/>
-			</label>
+		<div class="col-md-4">
+			<div class="form-group" [ngClass]="{ 'has-error': image.invalid && image.touched }">
+				<div class="input-group">
+					<label class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Select Image">
+						<span *ngIf="!user.image">Browse image <i class="fa fa-spinner fa-spin fa-3x fa-fw hide"></i></span>
+						<img id="image" class="img-fluid" [src]="user.image"/>
+						<input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedImage($event)"  style="display: none;" accept="image/*"/>
+					</label>
+				</div>
+				<div *ngIf="image.invalid && image.touched" >
+					<div class="help-block" *ngIf="image.errors.required">
+						Image is required.
+					</div>
+				</div>
+			</div>
 		</div>
-		<div class="form-group">
-			<input class="btn btn-primary" role="button" value="Back" (click)="goBack()">
-			<input type="submit" class="btn btn-success" role="button" value="Save" [disabled]="userForm.pristine">
+		<div class="col-md-8">
+			<div class="form-group margin-bottom-sm" [ngClass]="{ 'has-error': username.invalid && username.touched }">
+				<div class="input-group">
+					<input class="form-control" formControlName="username" placeholder="Username" data-toggle="tooltip" data-placement="bottom" title="Username">
+					<span class="input-group-addon" data-toggle="tooltip" data-placement="bottom" title="Username"><i class="fa fa-user fa-fw"></i></span>
+				</div>
+				<div *ngIf="username.invalid && username.touched" >
+					<div class="help-block" *ngIf="username.errors.required">
+						Username is required.
+					</div>
+					<div class="help-block" *ngIf="username.errors.minlength">
+						Username must be at least 3 characters long.
+					</div>
+					<div class="help-block" *ngIf="username.errors.maxlength">
+						Username must be maximum 25 characters long.
+					</div>
+				</div>
+			</div>
+			<div class="form-group margin-bottom-sm" [ngClass]="{ 'has-error': password.invalid && password.touched }">
+				<div class="input-group">
+					<input type="password" class="form-control" formControlName="password" placeholder="Password" data-toggle="tooltip" data-placement="bottom" title="Password">
+					<span class="input-group-addon" data-toggle="tooltip" data-placement="bottom" title="Password"><i class="fa fa-unlock-alt fa-fw"></i></span>
+				</div>
+				<div *ngIf="password.invalid && password.touched" >
+					<div class="help-block" *ngIf="password.errors.required">
+						Password is required.
+					</div>
+					<div class="help-block" *ngIf="password.errors.minlength">
+						Password must be at least 3 characters long.
+					</div>
+					<div class="help-block" *ngIf="password.errors.maxlength">
+						Password must be maximum 25 characters long.
+					</div>
+				</div>
+			</div>
+			<div class="form-group" [ngClass]="{ 'has-error': role.invalid && role.touched }">
+				<div class="input-group">
+					<select formControlName="role" class="form-control" data-toggle="tooltip" data-placement="bottom" title="User Role">
+						<option disabled="true">Select user role</option>
+						<option *ngFor="let role of roles" [ngValue]="role">{{ role.name }}</option>
+					</select>
+					<span class="input-group-addon" data-toggle="tooltip" data-placement="bottom" title="User Role"><i class="fa fa-users fa-fw"></i></span>
+				</div>
+				<div *ngIf="role.invalid && role.touched" >
+					<div class="help-block" *ngIf="role.errors.required">
+						Role is required.
+					</div>
+				</div>
+			</div>
+			<div class="form-group text-right">
+				<input type="button" class="btn btn-primary" role="button" value="Back" (click)="goBack()">
+				<input type="submit" class="btn btn-success" role="button" value="Save" [disabled]="userForm.pristine">
+			</div>
 		</div>
 	</form>
 </div>
