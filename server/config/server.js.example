@@ -1,5 +1,5 @@
 module.exports = {
-    APP_DOMAIN: 'localhost:3000',
+    APP_DOMAIN: 'http://localhost:3000',
     DB_URL: 'mongodb://illumina-sample:illumina-sample@ds123124.mlab.com:23124/illumina-sample',
     SECRET: 'illumina-sample',
     SALT_WORK_FACTOR: 10,
