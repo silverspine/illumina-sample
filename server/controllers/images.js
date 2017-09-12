@@ -4,6 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const moment = require('moment');
+const _ = require('lodash');
 const fs = require('fs');
 
 ///////////////////////////////
@@ -21,18 +22,7 @@ const sendError = require('../helpers/error_handler');
 // Multer middleware to handle multipart form data //
 /////////////////////////////////////////////////////
 const multer = require('multer');
-const upload = multer({
-    dest: config.UPLOAD_DIR,
-    rename: function (fieldname, filename) {
-        return filename + moment();
-    },
-    onFileUploadStart: function (file) {
-        console.log(file.originalname + ' is starting ...');
-    },
-    onFileUploadComplete: function (file) {
-        console.log(file.fieldname + ' uploaded to  ' + file.path);
-    }
-}).single('image');
+const upload = multer({ dest: config.UPLOAD_DIR }).single('image');
 router.use('/', upload);
 
 //////////////////
@@ -47,12 +37,20 @@ router.route('/')
             if (err) {
                 sendError(err, res);
             }
-            let path;
-            if(config.APP_DOMAIN.endsWith('/'))
-                path = config.APP_DOMAIN+'uploads/'+req.file.filename;
-            else
-                path = config.APP_DOMAIN+'/uploads/'+req.file.filename;
-            res.json(new BaseResponse(path));
+            let fileExtension = _.last(req.file.originalname.split('.'));
+            let oldFileName = req.file.filename;
+            let newFileName = moment()+'.'+fileExtension;
+            fs.rename(config.UPLOAD_DIR+oldFileName, config.UPLOAD_DIR+newFileName, function (err) {
+                if (err) throw err;
+                console.log('renamed complete');
+                let path;
+                console.log(req.file+'.'+fileExtension);
+                if(config.APP_DOMAIN.endsWith('/'))
+                    path = config.APP_DOMAIN+'uploads/'+newFileName;
+                else
+                    path = config.APP_DOMAIN+'/uploads/'+newFileName;
+                res.json(new BaseResponse(path));
+            });
         });
     });
 
@@ -62,7 +60,10 @@ router.route('/')
 router.route('/:name')
     .delete((req, res) => {
         fs.unlink(config.UPLOAD_DIR+req.params.name, (err) => {
-            if (err) sendError(err, res);;
+            if (err){
+                sendError(err, res);
+                return;
+            }
             let status = 201;
             res.status(status).json(new BaseResponse([], status, 'Successfully deleted'));
         });
