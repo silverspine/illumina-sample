@@ -100,16 +100,11 @@ export class UserDetailComponent implements OnInit {
 		/**
 		 * ng2-uploader
 		 */
-		//override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
+		// override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
 		this.uploader.onAfterAddingFile = (file)=> { file.withCredentials = false; };
-		//overide the onCompleteItem property of the uploader so we are 
-		//able to deal with the server response.
+
 		this.uploader.onCompleteItem = (item:any, response:any, status:any, headers:any) => {
-			this.preTmpImage = this.tmpImage;
-			this.tmpImage = JSON.parse(response).data;
-			this.userForm.value.image = this.tmpImage;
-			this.user.image = this.tmpImage;
-			this.changeImage();
+			this.changeImage(JSON.parse(response).data);
 		};
 	}
 
@@ -159,16 +154,27 @@ export class UserDetailComponent implements OnInit {
 	}
 
 	selectedImage(event: any): void {
+		let spinnerIcon = _.first(document.getElementsByClassName('fa'));
+		if(spinnerIcon)
+			spinnerIcon.classList.remove("hide");
 		if(event.target.files.length > 0) {
 			this.uploader.uploadAll();
 		}
 	}
 
-	changeImage(): void {
+	changeImage(data: any): void {
+		this.preTmpImage = this.tmpImage;
+		this.tmpImage = data;
+		this.userForm.value.image = this.tmpImage;
+		this.user.image = this.tmpImage;
+
 		this.deletePreviousImage();
-		let tagImage = document.getElementById('image');
+		let imageElemen = document.getElementById('image');
+		let spinnerIcon = _.first(document.getElementsByClassName('fa'));
+		if(spinnerIcon)
+			spinnerIcon.classList.add("hide");
 		let imageField = this.userForm.get('image');
-		tagImage.setAttribute('src', this.tmpImage);
+		imageElemen.setAttribute('src', this.tmpImage);
 		imageField.setValue(this.user.image);
 		imageField.markAsDirty();
 	}
@@ -178,11 +184,8 @@ export class UserDetailComponent implements OnInit {
 			try{
 				let preTmpImageName = _.last(this.preTmpImage.split('/'));
 				this.imageService.delete(preTmpImageName);
-				this.preTmpImage=null;
-			}catch(err){
-				console.log(err);
-			}
-			
+				this.preTmpImage = null;
+			}catch(err){}
 		}
 	}
 }
