@@ -1,8 +1,23 @@
+///////////////////////////////
+// Authentication controller //
+///////////////////////////////
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+
+///////////////////////////////
+// Configuration file import //
+///////////////////////////////
 const config = require('../config/server');
+
+///////////////////
+// Model imports //
+///////////////////
 const User = require('../models/user');
+
+////////////////////
+// Helper imports //
+////////////////////
 const BaseResponse = require('../helpers/base_response');
 const sendError = require('../helpers/error_handler');
 

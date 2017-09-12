@@ -4,14 +4,23 @@
 const express = require('express');
 const router = express.Router();
 
+//////////////////
+// Model import //
+//////////////////
 const Role = require('../models/role');
+
+////////////////////
+// Helper imports //
+////////////////////
 const BaseResponse = require('../helpers/base_response');
 const sendError = require('../helpers/error_handler');
 
+///////////////////////////////
+// Authentication middleware //
+///////////////////////////////
 const tokenVerify = require('../middleware/token_verify');
-router.use('/', tokenVerify);
-
 const userAuthorized = require('../middleware/user_authorized');
+router.use('/', tokenVerify);
 
 ///////////////////////
 // User Roles routes //

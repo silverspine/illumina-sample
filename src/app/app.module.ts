@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { HttpModule } from '@angular/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FileSelectDirective } from 'ng2-file-upload';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -12,6 +13,7 @@ import { UserService } from './services/user.service';
 import { ClientService } from './services/client.service';
 import { AuthGuard } from './guards/auth.guard';
 import { AuthenticationService } from './services/authentication.service';
+import { ImageService } from './services/image.service';
 
 import { ClientsComponent } from './clients/clients.component';
 import { ClientDetailComponent } from './client-detail/client-detail.component';
@@ -30,7 +32,8 @@ import { LoginComponent } from './login/login.component';
 		UserDetailComponent,
 		RolesComponent,
 		RoleDetailComponent,
-		LoginComponent
+		LoginComponent,
+		FileSelectDirective
 	],
 	imports: [
 		NgbModule.forRoot(),
@@ -45,7 +48,8 @@ import { LoginComponent } from './login/login.component';
 		UserService,
 		ClientService,
 		AuthGuard,
-		AuthenticationService
+		AuthenticationService,
+		ImageService
 	],
 	bootstrap: [AppComponent]
 })
