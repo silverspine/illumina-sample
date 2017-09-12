@@ -3,6 +3,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as _ from "lodash";
 
 import { Client } from '../models/client';
 import { ClientService } from '../services/client.service';
@@ -45,16 +46,26 @@ export class ClientDetailComponent implements OnInit {
 				Validators.maxLength(25)
 			]],
 			phone: ['', [
+				Validators.required,
 				Validators.pattern(exp)
 			]],
 			married: [false],
 			male: [true],
-			age: [''],
+			age: ['',[
+				Validators.required
+			]],
 			profession: ['', [
+				Validators.required,
+				Validators.minLength(3),
 				Validators.maxLength(25)
 			]]
 		});
 	}
+
+	get name() { return this.clientForm.get('name'); }
+	get phone() { return this.clientForm.get('phone'); }
+	get age() { return this.clientForm.get('age'); }
+	get profession() { return this.clientForm.get('profession'); }
 
 	ngOnInit(): void {
 		this.route.paramMap
@@ -93,6 +104,11 @@ export class ClientDetailComponent implements OnInit {
 	}
 
 	onSubmit() {
+		_.each(this.clientForm.controls, (elem) => {elem.markAsTouched()})
+
+		if(!this.clientForm.valid)
+			return;
+
 		this.client = this.prepareSaveClient();
 		if(this.client._id){
 			this.save();

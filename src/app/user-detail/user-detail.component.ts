@@ -46,21 +46,28 @@ export class UserDetailComponent implements OnInit {
 	createForm(): void {
 		this.userForm = this.fb.group({
 			username: ['', [
-			Validators.required,
-			Validators.minLength(3),
-			Validators.maxLength(25)
+				Validators.required,
+				Validators.minLength(3),
+				Validators.maxLength(25)
 			]],
 			password: ['', [
-			Validators.required,
-			Validators.minLength(3),
-			Validators.maxLength(40)
+				Validators.required,
+				Validators.minLength(3),
+				Validators.maxLength(40)
 			]],
 			role: ['', [
-			Validators.required
+				Validators.required
 			]],
-			image: ['']
+			image: ['',
+				Validators.required
+			]
 		});
 	}
+
+	get username() { return this.userForm.get('username'); }
+	get password() { return this.userForm.get('password'); }
+	get role() { return this.userForm.get('role'); }
+	get image() { return this.userForm.get('image'); }
 
 	ngOnInit(): void {
 		this.currentUser = this.authenticationService.user;
@@ -125,6 +132,11 @@ export class UserDetailComponent implements OnInit {
 	}
 
 	onSubmit(): void {
+		_.each(this.userForm.controls, (elem) => {elem.markAsTouched()})
+
+		if(!this.userForm.valid)
+			return;
+
 		this.user = this.prepareSaveUser();
 		if(this.user._id){
 			this.save();
@@ -154,7 +166,7 @@ export class UserDetailComponent implements OnInit {
 	}
 
 	selectedImage(event: any): void {
-		let spinnerIcon = _.first(document.getElementsByClassName('fa'));
+		let spinnerIcon = _.first(document.getElementsByClassName('fa-spinner'));
 		if(spinnerIcon)
 			spinnerIcon.classList.remove("hide");
 		if(event.target.files.length > 0) {
@@ -170,7 +182,7 @@ export class UserDetailComponent implements OnInit {
 
 		this.deletePreviousImage();
 		let imageElemen = document.getElementById('image');
-		let spinnerIcon = _.first(document.getElementsByClassName('fa'));
+		let spinnerIcon = _.first(document.getElementsByClassName('fa-spinner'));
 		if(spinnerIcon)
 			spinnerIcon.classList.add("hide");
 		let imageField = this.userForm.get('image');
