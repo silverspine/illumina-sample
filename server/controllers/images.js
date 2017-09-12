@@ -42,9 +42,7 @@ router.route('/')
             let newFileName = moment()+'.'+fileExtension;
             fs.rename(config.UPLOAD_DIR+oldFileName, config.UPLOAD_DIR+newFileName, function (err) {
                 if (err) throw err;
-                console.log('renamed complete');
                 let path;
-                console.log(req.file+'.'+fileExtension);
                 if(config.APP_DOMAIN.endsWith('/'))
                     path = config.APP_DOMAIN+'uploads/'+newFileName;
                 else

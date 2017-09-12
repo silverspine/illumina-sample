@@ -185,10 +185,7 @@ export class UserDetailComponent implements OnInit {
 				let preTmpImageName = _.last(this.preTmpImage.split('/'));
 				this.imageService.delete(preTmpImageName);
 				this.preTmpImage = null;
-			}catch(err){
-				console.log(err);
-			}
-			
+			}catch(err){}
 		}
 	}
 }
