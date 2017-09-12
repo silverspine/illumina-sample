@@ -2,21 +2,23 @@
 <div class="col-md-6 col-md-offset-3">
     <h2 class="text-right">Login</h2>
     <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
-        <div class="form-group input-group margin-bottom-sm" [ngClass]="{ 'has-error': f.submitted && !username.valid }">
-            <!-- <label for="username">Username</label> -->
-            <input type="text" class="form-control" name="username" placeholder="Username" [(ngModel)]="model.username" #username="ngModel" required />
-            <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+        <div class="form-group margin-bottom-sm" [ngClass]="{ 'has-error': f.submitted && !username.valid }">
+            <div class="input-group">
+                <input type="text" class="form-control" name="username" placeholder="Username" [(ngModel)]="model.username" #username="ngModel" required  data-toggle="tooltip" data-placement="bottom" title="Username"/>
+                <span class="input-group-addon"><i class="fa fa-user fa-fw" data-toggle="tooltip" data-placement="bottom" title="Username"></i></span>
+            </div>
             <div *ngIf="f.submitted && !username.valid" class="help-block">Username is required</div>
         </div>
-        <div class="form-group input-group" [ngClass]="{ 'has-error': f.submitted && !password.valid }">
-            <!-- <label for="password">Password</label> -->
-            <input type="password" class="form-control" name="password" placeholder="Password" [(ngModel)]="model.password" #password="ngModel" required />
-            <span class="input-group-addon"><i class="fa fa-unlock-alt fa-fw"></i></span>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !password.valid }">
+            <div class="input-group">
+                <input type="password" class="form-control" name="password" placeholder="Password" [(ngModel)]="model.password" #password="ngModel" required data-toggle="tooltip" data-placement="bottom" title="Password"/>
+                <span class="input-group-addon" data-toggle="tooltip" data-placement="bottom" title="Password"><i class="fa fa-unlock-alt fa-fw"></i></span>
+            </div>
             <div *ngIf="f.submitted && !password.valid" class="help-block">Password is required</div>
         </div>
         <div class="form-group text-right">
-            <button [disabled]="loading" class="btn btn-primary">Login</button>
             <i *ngIf="loading" class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+            <button [disabled]="loading" class="btn btn-primary">Login</button>
         </div>
         <div *ngIf="error" class="alert alert-danger">{{error}}</div>
     </form>

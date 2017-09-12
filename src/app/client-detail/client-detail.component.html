@@ -2,29 +2,81 @@
 	<h2 class="text-right" *ngIf="client._id">{{client.name | uppercase}} DETAILS</h2>
 	<h2 class="text-right" *ngIf="!client._id">CREATE NEW CLIENT</h2>
 	<form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
-		<div class="form-group">
-			<label class="center-block">Name:
-				<input class="form-control" formControlName="name">
-			</label>
-			<label class="center-block">Phone:
-				<input type="tel" class="form-control" formControlName="phone">
-			</label>
-			<label class="center-block">
-				<input type="checkbox" formControlName="married" value="true">Married
-			</label>
-			<label class="center-block">Sex:
-				<select formControlName="male">
+			<div class="form-group margin-bottom-sm" [ngClass]="{ 'has-error': name.invalid && name.touched }">
+				<div class="input-group">
+					<input class="form-control" formControlName="name" placeholder="Name" data-toggle="tooltip" data-placement="bottom" title="Name">
+					<span class="input-group-addon" data-toggle="tooltip" data-placement="bottom" title="Name"><i class="fa fa-user fa-fw"></i></span>
+				</div>
+				<div *ngIf="name.invalid && name.touched" >
+					<div class="help-block" *ngIf="name.errors.required">
+						Name is required.
+					</div>
+					<div class="help-block" *ngIf="name.errors.minlength">
+						Name must be at least 3 characters long.
+					</div>
+					<div class="help-block" *ngIf="name.errors.maxlength">
+						Name must be maximum 25 characters long.
+					</div>
+				</div>
+			</div>
+			<div class="form-group margin-bottom-sm" [ngClass]="{'has-error': phone.invalid && phone.touched}">
+				<div class="input-group">
+					<input type="tel" class="form-control" formControlName="phone" placeholder="Phone" data-toggle="tooltip" data-placement="bottom" title="Phone">
+					<span class="input-group-addon" data-toggle="tooltip" data-placement="bottom" title="Phone"><i class="fa fa-phone fa-fw"></i></span>
+				</div>
+				<div *ngIf="phone.invalid && phone.touched" >
+					<div class="help-block" *ngIf="phone.errors.required">
+						Phone is required.
+					</div>
+					<div class="help-block" *ngIf="phone.errors.pattern">
+						Not a valid phone number
+					</div>
+				</div>
+			</div>
+			<div class="form-group input-group margin-bottom-sm">
+				<select formControlName="married" class="form-control" data-toggle="tooltip" data-placement="bottom" title="Marital Status">
+					<option disabled="true">Select the Marital Status</option>
+					<option value="true" ng-selected="client.married">Married</option>
+					<option value="false" ng-selected="!client.married">Single</option>
+				</select>
+				<span class="input-group-addon" data-toggle="tooltip" data-placement="bottom" title="Marital Status"><i class="fa fa-heart fa-fw"></i></span>
+			</div>
+			<div class="form-group input-group margin-bottom-sm">
+				<select formControlName="male" class="form-control" data-toggle="tooltip" data-placement="bottom" title="Sex">
+					<option disabled="true">Select the Sex</option>
 					<option value="true" ng-selected="client.male">Male</option>
 					<option value="false" ng-selected="!client.male">Female</option>
 				</select>
-			</label>
-			<label class="center-block">Age:
-				<input type="number" min="1" max="100" class="form-control" formControlName="age">
-			</label>
-			<label class="center-block">Profession:
-				<input class="form-control" formControlName="profession">
-			</label>
-		</div>
+				<span class="input-group-addon" data-toggle="tooltip" data-placement="bottom" title="Sex"><i class="fa fa-venus-mars fa-fw"></i></span>
+			</div>
+			<div class="form-group margin-bottom-sm" [ngClass]="{ 'has-error': age.invalid && age.touched }">
+				<div class="input-group">
+					<input type="number" min="1" max="100" class="form-control" formControlName="age" placeholder="Age" data-toggle="tooltip" data-placement="bottom" title="Age">
+					<span class="input-group-addon" data-toggle="tooltip" data-placement="bottom" title="Age"><i class="fa fa-birthday-cake fa-fw"></i></span>
+				</div>
+				<div *ngIf="age.invalid && age.touched" >
+					<div class="help-block" *ngIf="age.errors.required">
+						Age is required.
+					</div>
+				</div>
+			</div>
+			<div class="form-group margin-bottom-sm" [ngClass]="{ 'has-error': profession.invalid && profession.touched }">
+				<div class="input-group">
+					<input class="form-control" formControlName="profession" placeholder="Profession" data-toggle="tooltip" data-placement="bottom" title="Profession">
+					<span class="input-group-addon" data-toggle="tooltip" data-placement="bottom" title="Profession"><i class="fa fa-black-tie fa-fw"></i></span>
+				</div>
+				<div *ngIf="profession.invalid && profession.touched" >
+					<div class="help-block" *ngIf="profession.errors.required">
+						Profession is required.
+					</div>
+					<div class="help-block" *ngIf="profession.errors.minlength">
+						Profession must be at least 3 characters long.
+					</div>
+					<div class="help-block" *ngIf="profession.errors.maxlength">
+						Profession must be maximum 25 characters long.
+					</div>
+				</div>
+			</div>
 		<div class="form-group text-right">
 			<input type="button" class="btn btn-primary" role="button" value="Back" (click)="goBack()">
 			<input type="submit" class="btn btn-success" role="button" value="Save" [disabled]="clientForm.pristine">

@@ -1,3 +1,8 @@
-.fa{
+.fa-spinner{
 	font-size: 1em;
+}
+
+#image{
+	/*max-width: 11em;*/
+	max-width: 100%;
 }
