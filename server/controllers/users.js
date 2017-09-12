@@ -4,43 +4,25 @@
 const express = require('express');
 const router = express.Router();
 const _ = require('lodash');
-const moment = require('moment');
-const fs = require('fs');
-const multer = require('multer');
-const upload = multer({
-	dest: '/uploads/',
-	onFileUploadStart: function (file) {
-		let imagePath = file.path;
 
-		gm(imagePath).resize(850, 850).quality(70).noProfile().write('public/uploads/spots/850x850/'+file.name+moment(), function (err) {
-			if (!err) {
-				gm(imagePath).resize(150, 150).quality(70).noProfile().write('public/uploads/spots/150x150/'+file.name+moment(), function (err) {
-					if (!err) {
-
-					}
-					else{
-						console.log('Error: '+err);
-					}
-				});
-			}else{
-				console.log('Error: '+err);
-			}
-		});
-	}
-});
-router.use('/', upload.single('image'));
-
-const tokenVerify = require('../middleware/token_verify');
-router.use('/', tokenVerify);
-
-const userAuthorized = require('../middleware/user_authorized');
-
+///////////////////
+// Model imports //
+///////////////////
 const User = require('../models/user');
 const Role = require('../models/role');
+
+////////////////////
+// Helper imports //
+////////////////////
 const BaseResponse = require('../helpers/base_response');
 const sendError = require('../helpers/error_handler');
 
-
+///////////////////////////////
+// Authentication middleware //
+///////////////////////////////
+const tokenVerify = require('../middleware/token_verify');
+const userAuthorized = require('../middleware/user_authorized');
+router.use('/', tokenVerify);
 
 /////////////////
 // User routes //

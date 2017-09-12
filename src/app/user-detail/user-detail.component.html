@@ -17,8 +17,10 @@
 			<label class="center-block">Image: </label>
 			<label class="btn btn-default">
 				<span *ngIf="!user.image">Browse</span>
-				<img width="200" heigh="200" id="image" [src]="user.image"/>
-				<input type="file" id="image" name="image" (change)="changeImage($event)" style="display: none;" accept="image/*">
+				<img width="200" heigh="200" id="image" class="img-fluid" [src]="user.image"/>
+				<!-- <input type="file" id="image" name="image" (change)="changeImage($event)" style="display: none;" accept="image/*"> -->
+				<!-- File input for the file-upload plugin, with special ng2-file-upload directive called ng2FileSelect -->
+				<input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedImage($event)"  style="display: none;" accept="image/*"/>
 			</label>
 		</div>
 		<div class="form-group">

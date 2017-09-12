@@ -4,12 +4,14 @@ import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as _ from "lodash";
+import { FileUploader } from 'ng2-file-upload/ng2-file-upload';
 
 import { User } from '../models/user';
 import { UserService } from '../services/user.service';
 import { Role } from '../models/role';
 import { RoleService } from '../services/role.service';
 import { AuthenticationService } from '../services/authentication.service';
+import { ImageService } from '../services/image.service';
 
 @Component({
 	selector: 'app-user-detail',
@@ -21,7 +23,11 @@ export class UserDetailComponent implements OnInit {
 	currentUser: User;
 	user: User;
 	roles: Role[];
-	userForm: FormGroup;
+	private userForm: FormGroup;
+	private uploader:FileUploader;
+	private tmpImage:string;
+	private preTmpImage:string;
+	private previousImage:string;
 
 	constructor(
 		private userService: UserService,
@@ -30,12 +36,14 @@ export class UserDetailComponent implements OnInit {
 		private location: Location,
 		private router: Router,
 		private fb: FormBuilder,
-		private authenticationService:AuthenticationService
+		private authenticationService:AuthenticationService,
+		private imageService: ImageService
 		) {
 		this.createForm();
+		this.uploader = new FileUploader({url: this.imageService.imagesUrl, itemAlias: 'image'})
 	}
 
-	createForm() {
+	createForm(): void {
 		this.userForm = this.fb.group({
 			username: ['', [
 			Validators.required,
@@ -79,6 +87,7 @@ export class UserDetailComponent implements OnInit {
 			.subscribe(user => {
 				this.user = user;
 				this.user.role = _.find(this.roles, { 'name': user.role.name});
+				this.previousImage = this.user.image;
 				this.userForm.setValue({
 					username: this.user.username || '',
 					password: this.user.password || '',
@@ -87,23 +96,40 @@ export class UserDetailComponent implements OnInit {
 				});
 			});
 		});
+
+		/**
+		 * ng2-uploader
+		 */
+		//override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
+		this.uploader.onAfterAddingFile = (file)=> { file.withCredentials = false; };
+		//overide the onCompleteItem property of the uploader so we are 
+		//able to deal with the server response.
+		this.uploader.onCompleteItem = (item:any, response:any, status:any, headers:any) => {
+			this.preTmpImage = this.tmpImage;
+			this.tmpImage = JSON.parse(response).data;
+			this.userForm.value.image = this.tmpImage;
+			this.user.image = this.tmpImage;
+			this.changeImage();
+		};
 	}
 
-	goBack() {
+	goBack(): void {
+		this.preTmpImage = this.tmpImage;
+		this.deletePreviousImage();
 		this.location.back();
 	}
 
-	save() {
+	save(): void {
 		this.userService.update(this.user)
-		.then(() => this.goBack());
+		.then(() => this.location.back());
 	}
 
-	create(){
+	create(): void {
 		this.userService.create(this.user)
-		.then(() => this.goBack());
+		.then(() => this.location.back());
 	}
 
-	onSubmit() {
+	onSubmit(): void {
 		this.user = this.prepareSaveUser();
 		if(this.user._id){
 			this.save();
@@ -115,6 +141,10 @@ export class UserDetailComponent implements OnInit {
 
 	prepareSaveUser(): User {
 		const formModel = this.userForm.value;
+		if(this.tmpImage){
+			this.preTmpImage = this.previousImage;
+			this.deletePreviousImage();
+		}
 
 		const saveUser: User = {
 			_id: this.user._id,
@@ -128,22 +158,31 @@ export class UserDetailComponent implements OnInit {
 		return saveUser;
 	}
 
-	public changeImage(event: any) {
+	selectedImage(event: any): void {
 		if(event.target.files.length > 0) {
-			let imageField = this.userForm.get('image');
-			let file = event.target.files[0];
-			let reader: FileReader = new FileReader();
-			let tagImage = document.getElementById('image');
+			this.uploader.uploadAll();
+		}
+	}
 
-			reader.onloadend = (e: any) => {
-				this.user.image = reader.result;
-				imageField.setValue(reader.result);
-				imageField.markAsDirty();
+	changeImage(): void {
+		this.deletePreviousImage();
+		let tagImage = document.getElementById('image');
+		let imageField = this.userForm.get('image');
+		tagImage.setAttribute('src', this.tmpImage);
+		imageField.setValue(this.user.image);
+		imageField.markAsDirty();
+	}
+
+	deletePreviousImage(): void {
+		if(this.preTmpImage){
+			try{
+				let preTmpImageName = _.last(this.preTmpImage.split('/'));
+				this.imageService.delete(preTmpImageName);
+				this.preTmpImage=null;
+			}catch(err){
+				console.log(err);
 			}
-			file.load = (e: any) => {
-				tagImage.setAttribute('src', reader.result);
-			}
-			reader.readAsDataURL(file);
+			
 		}
 	}
 }

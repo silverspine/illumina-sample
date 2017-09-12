@@ -1,9 +1,19 @@
+//////////////////////////////////////
+// Server initialization controller //
+//////////////////////////////////////
 const express = require('express');
 const router = express.Router();
 
+///////////////////
+// Model imports //
+///////////////////
 const Role = require('../models/role');
 const User = require('../models/user');
 const Client = require('../models/client');
+
+/////////////////////
+// Helpers imports //
+/////////////////////
 const BaseResponse = require('../helpers/base_response');
 const sendError = require('../helpers/error_handler');
 

@@ -17,11 +17,13 @@ const authenticate = require('../controllers/authenticate');
 const roles = require('../controllers/roles');
 const users = require('../controllers/users');
 const clients = require('../controllers/clients');
+const images = require('../controllers/images');
 
 router.use('/setup', serverInitialize);
 router.use('/authenticate', authenticate);
 router.use('/roles', roles);
 router.use('/users', users);
 router.use('/clients', clients);
+router.use('/images', images);
 
 module.exports = router;
