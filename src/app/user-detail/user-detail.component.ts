@@ -23,8 +23,11 @@ export class UserDetailComponent implements OnInit {
 	currentUser: User;
 	user: User;
 	roles: Role[];
-	userForm: FormGroup;
-	uploader:FileUploader;
+	private userForm: FormGroup;
+	private uploader:FileUploader;
+	private tmpImage:string;
+	private preTmpImage:string;
+	private previousImage:string;
 
 	constructor(
 		private userService: UserService,
@@ -84,6 +87,7 @@ export class UserDetailComponent implements OnInit {
 			.subscribe(user => {
 				this.user = user;
 				this.user.role = _.find(this.roles, { 'name': user.role.name});
+				this.previousImage = this.user.image;
 				this.userForm.setValue({
 					username: this.user.username || '',
 					password: this.user.password || '',
@@ -101,23 +105,28 @@ export class UserDetailComponent implements OnInit {
 		//overide the onCompleteItem property of the uploader so we are 
 		//able to deal with the server response.
 		this.uploader.onCompleteItem = (item:any, response:any, status:any, headers:any) => {
-			this.user.image = JSON.parse(response).data;
+			this.preTmpImage = this.tmpImage;
+			this.tmpImage = JSON.parse(response).data;
+			this.userForm.value.image = this.tmpImage;
+			this.user.image = this.tmpImage;
 			this.changeImage();
 		};
 	}
 
 	goBack(): void {
+		this.preTmpImage = this.tmpImage;
+		this.deletePreviousImage();
 		this.location.back();
 	}
 
 	save(): void {
 		this.userService.update(this.user)
-		.then(() => this.goBack());
+		.then(() => this.location.back());
 	}
 
 	create(): void {
 		this.userService.create(this.user)
-		.then(() => this.goBack());
+		.then(() => this.location.back());
 	}
 
 	onSubmit(): void {
@@ -132,6 +141,10 @@ export class UserDetailComponent implements OnInit {
 
 	prepareSaveUser(): User {
 		const formModel = this.userForm.value;
+		if(this.tmpImage){
+			this.preTmpImage = this.previousImage;
+			this.deletePreviousImage();
+		}
 
 		const saveUser: User = {
 			_id: this.user._id,
@@ -147,17 +160,29 @@ export class UserDetailComponent implements OnInit {
 
 	selectedImage(event: any): void {
 		if(event.target.files.length > 0) {
-			let tagImage = document.getElementById('image');
-			tagImage.setAttribute('src', 'data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==');
 			this.uploader.uploadAll();
 		}
 	}
 
 	changeImage(): void {
+		this.deletePreviousImage();
 		let tagImage = document.getElementById('image');
 		let imageField = this.userForm.get('image');
-		tagImage.setAttribute('src', this.user.image);
+		tagImage.setAttribute('src', this.tmpImage);
 		imageField.setValue(this.user.image);
 		imageField.markAsDirty();
+	}
+
+	deletePreviousImage(): void {
+		if(this.preTmpImage){
+			try{
+				let preTmpImageName = _.last(this.preTmpImage.split('/'));
+				this.imageService.delete(preTmpImageName);
+				this.preTmpImage=null;
+			}catch(err){
+				console.log(err);
+			}
+			
+		}
 	}
 }
